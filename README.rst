@@ -7,9 +7,6 @@ frost-ci
 .. image:: https://img.shields.io/coveralls/nickfrostatx/frost.svg
     :target: https://coveralls.io/github/nickfrostatx/frost
 
-.. image:: https://img.shields.io/pypi/v/frost.svg
-    :target: https://pypi.python.org/pypi/frost
-
 .. image:: https://img.shields.io/pypi/l/frost.svg
     :target: https://raw.githubusercontent.com/nickfrostatx/frost/master/LICENSE
 
