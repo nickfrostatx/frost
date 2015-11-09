@@ -21,7 +21,9 @@ setup(
     url='https://frost-ci.xyz',
     description='Totally not a Travis clone.',
     long_description=readme + '\n\n' + history,
-    packages=['frost'],
+    packages=[
+        'frost',
+    ],
     install_requires=[
         'Flask',
         'flask-hookserver',
@@ -47,7 +49,5 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy',
     ],
 )
