@@ -17,3 +17,10 @@ def test_home(client):
     rv = client.get('/')
     assert rv.data == b'Home\n'
     assert rv.status_code == 200
+
+
+def test_badge(client):
+    rv = client.get('/nick/repo.svg')
+    assert b'build' in rv.data
+    assert b'passing' in rv.data
+    assert rv.status_code == 200
