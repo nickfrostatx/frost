@@ -14,5 +14,5 @@ def error(e):
 
 
 @hooks.hook('ping')
-def ping():
+def ping(data, guid):
     return 'pong\n'
