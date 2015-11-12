@@ -3,12 +3,17 @@
 
 from frost.views import views
 import flask
+import pytest
 
 
-def test_custom_handler():
-    app = flask.Flask(__name__)
+@pytest.fixture
+def client():
+    app = flask.Flask(__name__, static_folder='../frost/static')
     app.register_blueprint(views)
-    with app.test_client() as client:
-        rv = client.get('/')
-        assert rv.data == b'Home\n'
-        assert rv.status_code == 200
+    return app.test_client()
+
+
+def test_home(client):
+    rv = client.get('/')
+    assert rv.data == b'Home\n'
+    assert rv.status_code == 200
