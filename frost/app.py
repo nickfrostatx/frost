@@ -15,4 +15,7 @@ def create_app():
     from .views import views
     app.register_blueprint(views)
 
+    from .hooks import hooks
+    app.register_blueprint(hooks)
+
     return app
