@@ -10,6 +10,6 @@ def create_app():
     app = Flask(package_name)
 
     from .error import register_error_handler, html_handler
-    register_error_handler(app, html_handler, include_500=True)
+    register_error_handler(app, html_handler)
 
     return app

@@ -13,7 +13,7 @@ def test_custom_handler():
     def handler(e):
         return e.name + '\n', e.code
 
-    register_error_handler(app, handler, include_500=True)
+    register_error_handler(app, handler)
 
     @app.route('/good')
     def good():
@@ -50,7 +50,7 @@ def test_custom_handler():
 def test_html_handler():
     app = flask.Flask(__name__, template_folder='../frost/templates')
     client = app.test_client()
-    register_error_handler(app, html_handler, include_500=True)
+    register_error_handler(app, html_handler)
 
     @app.route('/good')
     def good():
@@ -80,16 +80,19 @@ def test_html_handler():
 
 def test_not_500():
     app = flask.Flask(__name__)
-    client = app.test_client()
+    bp = flask.Blueprint('bp', __name__)
 
     def handler(e):
         return e.name + '\n', e.code
-    register_error_handler(app, handler, include_500=False)
+    register_error_handler(bp, handler)
 
-    @app.route('/internal')
+    @bp.route('/internal')
     def divide_by_zero():
         1/0
 
-    rv = client.get('/internal')
-    assert b'<!DOCTYPE HTML PUBLIC' in rv.data
-    assert rv.status_code == 500
+    app.register_blueprint(bp)
+
+    with app.test_client() as client:
+        rv = client.get('/internal')
+        assert b'<!DOCTYPE HTML PUBLIC' in rv.data
+        assert rv.status_code == 500
