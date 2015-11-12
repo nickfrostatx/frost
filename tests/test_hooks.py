@@ -7,13 +7,14 @@ import json
 import pytest
 
 
-def hook_client(hooks):
-    server = flask.Flask(__name__)
-    server.register_blueprint(hooks)
-    server.config['DEBUG'] = True
-    server.config['VALIDATE_IP'] = False
-    server.config['VALIDATE_SIGNATURE'] = False
-    return server.test_client()
+@pytest.fixture
+def client():
+    app = flask.Flask(__name__)
+    app.register_blueprint(hooks)
+    app.config['DEBUG'] = True
+    app.config['VALIDATE_IP'] = False
+    app.config['VALIDATE_SIGNATURE'] = False
+    return app.test_client()
 
 
 def post(client, hook, data, guid='abc'):
@@ -25,22 +26,19 @@ def post(client, hook, data, guid='abc'):
                        data=json.dumps(data), headers=headers)
 
 
-def test_ping():
-    with hook_client(hooks) as client:
-        rv = post(client, 'ping', {})
-        assert rv.data == b'pong\n'
-        assert rv.status_code == 200
+def test_ping(client):
+    rv = post(client, 'ping', {})
+    assert rv.data == b'pong\n'
+    assert rv.status_code == 200
 
 
-def test_unused():
-    with hook_client(hooks) as client:
-        rv = post(client, 'push', {})
-        assert rv.data == b'Hook not used\n'
-        assert rv.status_code == 200
+def test_unused(client):
+    rv = post(client, 'push', {})
+    assert rv.data == b'Hook not used\n'
+    assert rv.status_code == 200
 
 
-def test_bad_request():
-    with hook_client(hooks) as client:
-        rv = client.post('/hooks')
-        assert rv.data == b'hwhat\n'
-        assert rv.status_code == 400
+def test_bad_request(client):
+    rv = client.post('/hooks')
+    assert rv.data == b'hwhat\n'
+    assert rv.status_code == 400
