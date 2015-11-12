@@ -29,7 +29,7 @@ def register_error_handler(app, fn):
 
 
 def errorhandler(app):
-    """Returns a decorator that registers fn as an error handler."""
+    """Return a decorator that registers fn as an error handler."""
     def decorator(fn):
         register_error_handler(app, fn)
         return fn

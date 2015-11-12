@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Main HTML views."""
 
-
 from flask import Blueprint
 
 
