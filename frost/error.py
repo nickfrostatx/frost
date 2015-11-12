@@ -28,6 +28,14 @@ def register_error_handler(app, fn):
     return fn
 
 
+def errorhandler(app):
+    """Returns a decorator that registers fn as an error handler."""
+    def decorator(fn):
+        register_error_handler(app, fn)
+        return fn
+    return decorator
+
+
 def html_handler(e):
     """Render the HTML error page for a given HTTPException."""
     return render_template('error.html', e=e), e.code
