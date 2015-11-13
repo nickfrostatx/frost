@@ -59,6 +59,18 @@ header {
     color: #3ca85b;
 }
 
+.failing {
+    color: #db423c;
+}
+
+.progress {
+    color: #c4bb16;
+}
+
+.inactive {
+    color: #999;
+}
+
 .repo {
     border-top: 1px solid #999;
     padding: 24px 0;
