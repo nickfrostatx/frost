@@ -38,4 +38,4 @@ def errorhandler(app):
 
 def html_handler(e):
     """Render the HTML error page for a given HTTPException."""
-    return render_template('error.html', e=e), e.code
+    return render_template('views/error.html', e=e), e.code
