@@ -3,8 +3,8 @@
 {% block body %}
       {%- for repo in repos %}
       <div class="repo">
-        <div class="name {{ repo.status }}">
-          <a href="/{{ repo.user }}/{{ repo.name }}">{{ repo.user }}/{{ repo.name }}</a>
+        <div class="name {{ repos[repo].status }}">
+          <a href="/{{ repos[repo].user }}/{{ repo }}">{{ repos[repo].user }}/{{ repo }}</a>
         </div>
       </div>
       {%- endfor %}

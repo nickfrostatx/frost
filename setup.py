@@ -30,6 +30,7 @@ setup(
     ],
     extras_require={
         'testing': [
+            'blinker',
             'pytest',
             'pytest-cov',
             'pytest-pep8',
