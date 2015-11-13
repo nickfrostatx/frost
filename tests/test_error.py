@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test error handling."""
 
-from frost.error import register_error_handler, html_handler
+from frost.error import register_error_handler, errorhandler, html_handler
 import flask
 import werkzeug.exceptions
 
@@ -124,3 +124,28 @@ def test_html_handler():
         assert b'<title>Frost CI - Internal Server Error</title>' in rv.data
         assert b'<h1>Error 500</h1>' in rv.data
         assert rv.status_code == 500
+
+
+def test_decorator():
+    app = flask.Flask(__name__, template_folder='../frost/templates')
+
+    @errorhandler(app)
+    def handler(e):
+        return e.name + '\n', e.code
+
+    @app.route('/good')
+    def good():
+        return 'OK'
+
+    @app.route('/418')
+    def teapot():
+        flask.abort(418)
+
+    with app.test_client() as client:
+        rv = client.get('/good')
+        assert rv.data == b'OK'
+        assert rv.status_code == 200
+
+        rv = client.get('/418')
+        assert rv.data == b'I\'m a teapot\n'
+        assert rv.status_code == 418
