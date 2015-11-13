@@ -8,14 +8,15 @@ import pytest
 
 @pytest.fixture
 def client():
-    app = flask.Flask(__name__, static_folder='../frost/static')
+    app = flask.Flask(__name__, template_folder='../frost/templates',
+                      static_folder='../frost/static')
     app.register_blueprint(views)
     return app.test_client()
 
 
 def test_home(client):
     rv = client.get('/')
-    assert rv.data == b'Home\n'
+    assert b'<h1>Home</h1>' in rv.data
     assert rv.status_code == 200
 
 
