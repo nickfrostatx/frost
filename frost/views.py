@@ -9,7 +9,29 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def home():
-    return render_template('views/home.html')
+    repos = [
+        {
+            'user': 'nickfrostatx',
+            'name': 'frost',
+            'status': 'passing',
+        },
+        {
+            'user': 'nickfrostatx',
+            'name': 'flask-hookserver',
+            'status': 'progress',
+        },
+        {
+            'user': 'nickfrostatx',
+            'name': 'nass',
+            'status': 'failing',
+        },
+        {
+            'user': 'nickfrostatx',
+            'name': 'corral',
+            'status': 'inactive',
+        },
+    ]
+    return render_template('views/home.html', repos=repos)
 
 
 @views.route('/<user>/<repo>.svg')
