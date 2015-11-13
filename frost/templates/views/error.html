@@ -3,5 +3,8 @@
 {% block title %}Frost CI - {{ e.name }}{% endblock %}
 
 {% block body %}
-    <h1>Error {{ e.code }}</h1>
+      <div class="err">
+        <h1 class="err-code">Error {{ e.code }}</h1>
+        <div class="err-msg">{{ e.name }}</div>
+      </div>
 {%- endblock %}

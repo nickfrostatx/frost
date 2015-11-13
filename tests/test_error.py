@@ -117,12 +117,12 @@ def test_html_handler():
 
         rv = client.get('/418')
         assert b'<title>Frost CI - I&#39;m a teapot</title>' in rv.data
-        assert b'<h1>Error 418</h1>' in rv.data
+        assert b'>Error 418</h1>' in rv.data
         assert rv.status_code == 418
 
         rv = client.get('/internal')
         assert b'<title>Frost CI - Internal Server Error</title>' in rv.data
-        assert b'<h1>Error 500</h1>' in rv.data
+        assert b'>Error 500</h1>' in rv.data
         assert rv.status_code == 500
 
 

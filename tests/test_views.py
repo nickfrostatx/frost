@@ -16,7 +16,6 @@ def client():
 
 def test_home(client):
     rv = client.get('/')
-    assert b'<h1>Home</h1>' in rv.data
     assert rv.status_code == 200
 
 

@@ -1,9 +1,16 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset="utf-8">
     <title>{% block title %}Frost CI{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/static/main.css">
   </head>
   <body>
-    {%- block body %}{% endblock %}
+    <header>
+      <h1 class="logo"><a href="/">Frost CI</a></h1>
+    </header>
+    <div class="container">
+      {%- block body %}{% endblock %}
+    </div>
   </body>
 </html>
