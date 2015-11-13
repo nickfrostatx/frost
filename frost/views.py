@@ -28,4 +28,4 @@ def home():
 
 @views.route('/<user>/<repo>.svg')
 def badge(user, repo):
-    return current_app.send_static_file('passing.svg')
+    return current_app.send_static_file('badges/passing.svg')
