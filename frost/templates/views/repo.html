@@ -5,5 +5,5 @@
         <a href="/{{ repo.user }}">{{ repo.user }}</a> /
         <a href="/{{ repo.user }}/{{ repo.name }}">{{ repo.name }}</a>
       </div>
-      <img src="/{{ repo.user }}/{{ repo.name }}.svg" />
+      <img src="{{ request.url_root }}{{ repo.user }}/{{ repo.name }}.svg" />
 {%- endblock %}
