@@ -43,6 +43,7 @@ header {
 .err-code {
     font-family: 'HelveticaNeue-CondensedBold', 'Helvetica', 'Arial Narrow', 'Arial', sans-serif;
     font-size: 60px;
+    font-weight: bold;
     margin: 0;
     text-align: center;
 }
@@ -79,6 +80,7 @@ header {
 .name {
     font-family: 'HelveticaNeue-CondensedBold', 'Helvetica', 'Arial Narrow', 'Arial', sans-serif;
     font-size: 20px;
+    font-weight: bold;
 }
 
 .repo:first-child {
