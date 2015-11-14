@@ -8,6 +8,7 @@ import pytest
 
 def test_get_repos():
     repos = frost.model.get_repos('nickfrostatx')
+    assert type(repos) == list
     assert len(repos) == 4
 
 
