@@ -35,8 +35,42 @@ def test_home_invalid_user(client):
         assert rv.status_code == 500
 
 
-def test_badge(client):
-    rv = client.get('/nick/repo.svg')
+def test_valid_badges(client):
+    rv = client.get('/nickfrostatx/frost.svg')
     assert b'build' in rv.data
     assert b'passing' in rv.data
     assert rv.status_code == 200
+
+    rv = client.get('/nickfrostatx/flask-hookserver.svg')
+    assert b'build' in rv.data
+    assert b'error' in rv.data
+    assert rv.status_code == 200
+
+    rv = client.get('/nickfrostatx/nass.svg')
+    assert b'build' in rv.data
+    assert b'failing' in rv.data
+    assert rv.status_code == 200
+
+    rv = client.get('/nickfrostatx/corral.svg')
+    assert b'build' in rv.data
+    assert b'unknown' in rv.data
+    assert rv.status_code == 200
+
+
+def test_404_badge(client):
+    rv = client.get('/nickfrostatx/fakerepo.svg')
+    assert b'build' in rv.data
+    assert b'invalid' in rv.data
+    assert rv.status_code == 404
+
+    rv = client.get('/fakeuser/fakerepo.svg')
+    assert b'build' in rv.data
+    assert b'invalid' in rv.data
+    assert rv.status_code == 404
+
+
+def test_500_badge(client):
+    rv = client.get('/nickfrostatx/error.svg')
+    assert b'build' in rv.data
+    assert b'error' in rv.data
+    assert rv.status_code == 500

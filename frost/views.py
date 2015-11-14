@@ -4,7 +4,7 @@
 from flask import Blueprint, current_app, g, render_template
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
-from .util import get_repos
+from .util import get_repo, get_repos
 
 
 views = Blueprint('views', __name__)
@@ -28,4 +28,25 @@ def home():
 
 @views.route('/<user>/<repo>.svg')
 def badge(user, repo):
-    return current_app.send_static_file('badges/passing.svg')
+    try:
+        status = get_repo(user, repo)['build_status']
+        status_code = 200
+    except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
+        status = 'invalid'
+        status_code = 404
+    except Exception:
+        status = 'error'
+        status_code = 500
+
+    if status == 'passing':
+        badge_path = 'badges/passing.svg'
+    elif status == 'failing':
+        badge_path = 'badges/failing.svg'
+    elif status == 'unknown':
+        badge_path = 'badges/unknown.svg'
+    elif status == 'invalid':
+        badge_path = 'badges/invalid.svg'
+    else:
+        badge_path = 'badges/error.svg'
+
+    return current_app.send_static_file(badge_path), status_code
