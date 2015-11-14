@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """Utility functions."""
 
+from datetime import datetime, timedelta
+from flask import make_response
+from functools import wraps
+from werkzeug.http import http_date
 from . import exceptions
 
 
@@ -54,3 +58,17 @@ def get_repo(user, repo):
     if repo not in _repos[user]:
         raise exceptions.NoSuchRepoException()
     return _repos[user][repo]
+
+
+def nocache(fn):
+    """Decorate the view fn to override Cache-Control header."""
+    @wraps(fn)
+    def wrapped(*a, **kw):
+        resp = make_response(fn(*a, **kw))
+        resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+        resp.headers['Pragma'] = 'no-cache'
+        resp.headers['Expires'] = http_date(datetime.now() - timedelta(0, 2))
+        del resp.headers['ETag']
+        del resp.headers['Last-Modified']
+        return resp
+    return wrapped

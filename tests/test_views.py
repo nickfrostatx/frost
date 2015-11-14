@@ -72,6 +72,14 @@ def test_valid_badges(client):
     assert rv.status_code == 200
 
 
+def test_badge_headers(client):
+    rv = client.get('/nickfrostatx/frost.svg')
+    assert 'ETag' not in rv.headers
+    assert 'Last-Modified' not in rv.headers
+    assert rv.headers['Cache-Control'] == 'no-store, no-cache, must-revalidate'
+    assert rv.headers['Pragma'] == 'no-cache'
+
+
 def test_404_badge(client):
     rv = client.get('/nickfrostatx/fakerepo.svg')
     assert b'build' in rv.data

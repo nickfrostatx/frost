@@ -4,7 +4,7 @@
 from flask import Blueprint, abort, current_app, g, render_template
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
-from .util import get_repo, get_repos
+from .util import get_repo, get_repos, nocache
 
 
 views = Blueprint('views', __name__)
@@ -36,6 +36,7 @@ def repo_page(user, repo):
 
 
 @views.route('/<user>/<repo>.svg')
+@nocache
 def badge(user, repo):
     try:
         status = get_repo(user, repo)['build_status']
