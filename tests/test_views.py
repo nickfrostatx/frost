@@ -35,6 +35,21 @@ def test_home_invalid_user(client):
         assert rv.status_code == 500
 
 
+def test_repo_page(client):
+    rv = client.get('/nickfrostatx/frost')
+    assert b'nickfrostatx' in rv.data
+    assert b'frost' in rv.data
+    assert rv.status_code == 200
+
+
+def test_invalid_repo_page(client):
+    rv = client.get('/nickfrostatx/fakerepo')
+    assert rv.status_code == 404
+
+    rv = client.get('/fakeuser/fakerepo')
+    assert rv.status_code == 404
+
+
 def test_valid_badges(client):
     rv = client.get('/nickfrostatx/frost.svg')
     assert b'build' in rv.data
