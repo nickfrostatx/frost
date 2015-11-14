@@ -29,3 +29,19 @@ def test_invalid_repos():
 
     with pytest.raises(frost.exceptions.NoSuchRepoException):
         frost.model.get_repo('nickfrostatx', 'fakerepo')
+
+
+def test_get_repo_status():
+    status = frost.model.get_repo_status('nickfrostatx', 'frost')
+    assert status == 'passing'
+
+
+def test_invalid_repo_status():
+    with pytest.raises(frost.exceptions.NoSuchUserException):
+        frost.model.get_repo_status('fakeuser', 'fakerepo')
+
+    with pytest.raises(frost.exceptions.NoSuchRepoException):
+        frost.model.get_repo_status('nickfrostatx', 'fakerepo')
+
+    with pytest.raises(KeyError):
+        frost.model.get_repo_status('error', 'error')

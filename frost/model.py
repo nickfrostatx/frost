@@ -60,3 +60,12 @@ def get_repo(user, repo):
     if repo not in _repos[user]:
         raise exceptions.NoSuchRepoException()
     return _repos[user][repo]
+
+
+def get_repo_status(user, repo):
+    """Return the build status of a repo."""
+    if user not in _repos:
+        raise exceptions.NoSuchUserException()
+    if repo not in _repos[user]:
+        raise exceptions.NoSuchRepoException()
+    return _repos[user][repo]['build_status']

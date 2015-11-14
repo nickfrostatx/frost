@@ -4,7 +4,7 @@
 from flask import Blueprint, abort, current_app, g, render_template
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
-from .model import get_repo, get_repos
+from .model import get_repos, get_repo, get_repo_status
 from .util import nocache
 
 
@@ -40,12 +40,12 @@ def repo_page(user, repo):
 @nocache
 def badge(user, repo):
     try:
-        status = get_repo(user, repo)['build_status']
+        status = get_repo_status(user, repo)
         status_code = 200
     except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
         status = 'invalid'
         status_code = 404
-    except Exception:
+    except KeyError:
         status = 'error'
         status_code = 500
 
