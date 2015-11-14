@@ -70,7 +70,7 @@ def test_404_badge(client):
 
 
 def test_500_badge(client):
-    rv = client.get('/nickfrostatx/error.svg')
+    rv = client.get('/error/error.svg')
     assert b'build' in rv.data
     assert b'error' in rv.data
     assert rv.status_code == 500

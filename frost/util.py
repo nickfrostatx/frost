@@ -30,10 +30,12 @@ _repos = {
             'status': 'inactive',
             'build_status': 'unknown',
         },
+    },
+    'error': {
         'error': {
-            'user': 'nickfrostatx',
+            'user': 'error',
             'name': 'error',
-        }
+        },
     },
 }
 

@@ -8,7 +8,7 @@ import pytest
 
 def test_get_repos():
     repos = frost.util.get_repos('nickfrostatx')
-    assert len(repos) == 5
+    assert len(repos) == 4
 
 
 def test_invalid_user():
