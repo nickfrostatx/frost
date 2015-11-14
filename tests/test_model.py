@@ -19,6 +19,7 @@ def test_invalid_user():
 
 def test_get_repo():
     repo = frost.model.get_repo('nickfrostatx', 'frost')
+    assert repo['name'] == 'frost'
     assert repo['status'] == 'passing'
 
 
