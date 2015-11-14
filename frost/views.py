@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Main HTML views."""
 
-from flask import Blueprint, current_app, g, render_template
+from flask import Blueprint, abort, current_app, g, render_template
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
 from .util import get_repo, get_repos
@@ -24,6 +24,15 @@ def home():
         # This shouldn't happen
         raise InternalServerError()
     return render_template('views/home.html', repos=repos)
+
+
+@views.route('/<user>/<repo>')
+def repo_page(user, repo):
+    try:
+        r = get_repo(user, repo)
+    except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
+        abort(404)
+    return render_template('views/repo.html', repo=r)
 
 
 @views.route('/<user>/<repo>.svg')

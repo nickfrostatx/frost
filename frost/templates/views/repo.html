@@ -1,7 +1,9 @@
 {% extends "lib/base.html" %}
 
-{% block body %}
+{% block content %}
       <div class="title {{ repo.status }}">
-        <a href="/{{ repo.user }}/{{ repo.name }}">{{ repo.user }}/{{ repo.name }}</a>
+        <a href="/{{ repo.user }}">{{ repo.user }}</a> /
+        <a href="/{{ repo.user }}/{{ repo.name }}">{{ repo.name }}</a>
       </div>
+      <img src="/{{ repo.user }}/{{ repo.name }}.svg" />
 {%- endblock %}
