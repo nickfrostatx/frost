@@ -2,6 +2,7 @@
 
 from setuptools import setup
 import re
+import sys
 
 version = ''
 with open('frost/__init__.py', 'r') as f:
