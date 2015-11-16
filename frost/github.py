@@ -41,7 +41,6 @@ class GitHub(object):
         try:
             response = self.session.request(method, url, *a, **kw)
         except requests.exceptions.RequestException as e:
-            print(e)
             raise exceptions.GitHubError()
 
         if not response.ok:
