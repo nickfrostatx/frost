@@ -24,7 +24,7 @@ class GitHub(object):
 
         try:
             access_token = data['access_token']
-            assert isinstance(access_token, str)
+            assert isinstance(access_token, basestring)
         except (TypeError, KeyError, AssertionError):
             raise exceptions.GitHubError()
 
