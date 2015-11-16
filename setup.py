@@ -27,6 +27,7 @@ setup(
     install_requires=[
         'Flask',
         'flask-hookserver',
+        'requests',
     ],
     extras_require={
         'testing': [

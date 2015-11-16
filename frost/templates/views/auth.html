@@ -1,0 +1,12 @@
+{% extends "lib/base.html" %}
+
+{% block content %}
+      <div class="middle">
+        <form action="/login" method="post">
+          <a class="auth-btn" href="javascript:void(0)" onclick="this.parentNode.submit()">
+            <span class="auth-big">Sign in</span><br />
+            <span class="auth-small">With GitHub</span>
+          </a>
+        </form>
+      </div>
+{%- endblock %}

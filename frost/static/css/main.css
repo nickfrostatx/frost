@@ -30,7 +30,7 @@ header {
     text-decoration: none;
 }
 
-.err {
+.middle {
     height: 180px;
     margin: auto;
     position: absolute;
@@ -38,6 +38,7 @@ header {
     bottom: 0;
     left: 0;
     right: 0;
+    text-align: center;
 }
 
 .err-code {
@@ -45,7 +46,6 @@ header {
     font-size: 60px;
     font-weight: bold;
     margin: 0;
-    text-align: center;
 }
 
 .err-msg {
@@ -53,7 +53,38 @@ header {
     font-family: 'HelveticaNeue-CondensedBold', 'Helvetica', 'Arial Narrow', 'Arial', sans-serif;
     font-size: 20px;
     font-weight: bold;
-    text-align: center;
+}
+
+.auth-btn {
+    background-color: #3ca85b;
+    border-radius: 8px;
+    display: block;
+    letter-spacing: .5px;
+    margin: 0 auto;
+    padding: 10px 0;
+    width: 150px;
+}
+
+.auth-btn:hover {
+    background-color: #62ba7b;
+    text-decoration: none;
+}
+
+.auth-btn:active {
+    background-color: #3ca85b;
+}
+
+.auth-big {
+    color: #fff;
+    font-family: 'HelveticaNeue-UltraLight', 'HelveticaNeue', 'Helvetica', 'Arial', sans-serif;
+    font-size: 30px;
+    font-weight: 400;
+}
+
+.auth-small {
+    color: #ccc;
+    font-family: 'HelveticaNeue-Light', 'HelveticaNeue', 'Helvetica', 'Arial', sans-serif;
+    font-size: 15px;
 }
 
 .passing {

@@ -2,9 +2,21 @@
 """Utility functions."""
 
 from datetime import datetime, timedelta
-from flask import make_response
+from flask import make_response, request
 from functools import wraps
 from werkzeug.http import http_date
+try:
+    from urllib.parse import urlparse, urljoin
+except ImportError:
+    from urlparse import urlparse, urljoin
+
+
+def is_safe_url(url):
+    """Return whether the url is on the app's host."""
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(url)
+    return (test_url.scheme == ref_url.scheme and
+            ref_url.netloc == test_url.netloc)
 
 
 def nocache(fn):
