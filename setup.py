@@ -13,6 +13,14 @@ with open('README.rst') as f:
 with open('HISTORY.rst') as f:
     history = f.read()
 
+requirements = [
+    'Flask',
+    'flask-hookserver',
+    'requests',
+]
+if sys.version_info < (3, 3):
+    requirements.append('ipaddress')
+
 setup(
     name='frost',
     version=version,
@@ -24,11 +32,7 @@ setup(
     packages=[
         'frost',
     ],
-    install_requires=[
-        'Flask',
-        'flask-hookserver',
-        'requests',
-    ],
+    install_requires=requirements,
     extras_require={
         'testing': [
             'blinker',
