@@ -6,9 +6,9 @@ from flask import make_response, request
 from functools import wraps
 from werkzeug.http import http_date
 try:
-    from urllib.parse import urlparse, urljoin
+    from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse, urljoin
+    from urlparse import urlparse
 
 
 def is_safe_url(url):
@@ -16,7 +16,8 @@ def is_safe_url(url):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(url)
     return (test_url.scheme == ref_url.scheme and
-            ref_url.netloc == test_url.netloc)
+            ref_url.netloc == test_url.netloc and
+            test_url.path != request.path)
 
 
 def nocache(fn):
