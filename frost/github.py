@@ -9,10 +9,9 @@ class GitHub(object):
 
     """GitHub API implementation."""
 
-    def __init__(self, client_id, client_secret, url='https://github.com'):
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.base_url = url
+    def __init__(self, app, base_url='https://github.com'):
+        self.app = app
+        self.base_url = base_url
 
     def get_access_token(self, code):
         url = '/login/oauth/access_token'
@@ -30,7 +29,6 @@ class GitHub(object):
             raise exceptions.GitHubError()
 
         return access_token
-
 
     def make_request(self, method, url, *a, **kw):
         """Make the actual request, and handle any errors."""
@@ -54,6 +52,13 @@ class GitHub(object):
         except ValueError:
             raise exceptions.GitHubError()
 
+    @property
+    def client_id(self):
+        return self.app.config['CLIENT_ID']
+
+    @property
+    def client_secret(self):
+        return self.app.config['CLIENT_SECRET']
 
     @property
     def session(self):

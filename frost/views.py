@@ -19,7 +19,8 @@ views = Blueprint('views', __name__)
 
 @views.before_request
 def check_auth():
-    g.authed = False
+    if getattr(g, 'authed', None) is None:
+        g.authed = False
     if getattr(g, 'user', None) is None:
         g.user = 'nickfrostatx'
 
@@ -43,7 +44,7 @@ def login():
                        'read:org'])
     state = 'my unique  state str'
 
-    redirect_uri='http://localhost:5000/oauth'
+    redirect_uri = 'http://localhost:5000/oauth'
 
     qs = ('client_id={0}&scope={1}&state={2}&redirect_uri={3}'
           .format(client_id, scopes, state, redirect_uri))
