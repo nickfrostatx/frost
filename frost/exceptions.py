@@ -21,7 +21,7 @@ class GitHubError(Exception):
             message = '{0}: {1}'.format(self.response.status_code,
                                         self.response.json()['message'])
         except Exception:
-            message = 'Failed to communicate with GitHub.'
+            message = 'Failed to communicate with GitHub'
         return message
 
     @property
