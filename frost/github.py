@@ -53,11 +53,11 @@ class GitHub(object):
 
     @property
     def client_id(self):
-        return self.app.config['CLIENT_ID']
+        return self.app.config['GITHUB_CLIENT_ID']
 
     @property
     def client_secret(self):
-        return self.app.config['CLIENT_SECRET']
+        return self.app.config['GITHUB_CLIENT_SECRET']
 
     @property
     def session(self):
