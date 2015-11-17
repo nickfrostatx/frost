@@ -24,7 +24,7 @@ class GitHub(object):
 
         try:
             access_token = data['access_token']
-            assert isinstance(access_token, basestring)
+            assert hasattr(access_token, 'encode')  # Must be unicode
         except (TypeError, KeyError, AssertionError):
             raise exceptions.GitHubError()
 
