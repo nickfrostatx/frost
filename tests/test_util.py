@@ -39,6 +39,12 @@ def test_is_safe_url():
         rv = client.get('/')
         assert json.loads(rv.data.decode('utf-8'))['safe'] == False
 
+        rv = client.get('/', headers={'Referer': '/'})
+        assert json.loads(rv.data.decode('utf-8'))['safe'] == False
+
+        rv = client.get('/', headers={'Referer': '/abc'})
+        assert json.loads(rv.data.decode('utf-8'))['safe'] == True
+
         rv = client.get('/', headers={'Referer': 'http://example.com/abc'})
         assert json.loads(rv.data.decode('utf-8'))['safe'] == False
 
