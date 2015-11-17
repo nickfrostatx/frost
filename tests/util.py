@@ -1,4 +1,4 @@
-## -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """Shared utility functions."""
 
 from werkzeug.serving import ThreadedWSGIServer
