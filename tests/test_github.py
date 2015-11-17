@@ -132,7 +132,7 @@ def test_invalid_json(github, serving_app):
 def test_get_access_token(github, serving_app):
     github.base_url = serving_app.url
 
-    @serving_app.route('/login/oauth/access_token')
+    @serving_app.route('/login/oauth/access_token', methods=['POST'])
     def missing():
         client_id = flask.request.args.get('client_id')
         client_secret = flask.request.args.get('client_secret')

@@ -22,7 +22,7 @@ class GitHub(object):
             'client_secret': self.client_secret,
             'code': code,
         }
-        data = self.make_request('GET', url, params=params)
+        data = self.make_request('POST', url, params=params)
 
         try:
             access_token = data['access_token']
