@@ -10,8 +10,6 @@ def create_app():
     """Return an instance of the main Flask application."""
     app = Flask(package_name)
 
-    app.config['GITHUB_CLIENT_ID'] = os.environ.get('GITHUB_CLIENT_ID')
-    app.config['GITHUB_CLIENT_SECRET'] = os.environ.get('GITHUB_CLIENT_SECRET')
     from .github import GitHub
     app.github = GitHub(app)
 
