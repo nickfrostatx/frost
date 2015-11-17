@@ -10,10 +10,12 @@ class GitHub(object):
     """GitHub API implementation."""
 
     def __init__(self, app, base_url='https://github.com'):
+        """Construct the API object."""
         self.app = app
         self.base_url = base_url
 
     def get_access_token(self, code):
+        """Request an access token with the given code."""
         url = '/login/oauth/access_token'
         params = {
             'client_id': self.client_id,

@@ -17,6 +17,7 @@ class GitHubError(Exception):
     """Communication with the GitHub API has failed."""
 
     def __str__(self):
+        """Return the error message, or a generic message."""
         try:
             message = '{0}: {1}'.format(self.response.status_code,
                                         self.response.json()['message'])
