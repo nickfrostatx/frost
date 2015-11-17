@@ -19,9 +19,9 @@ def is_safe_url(url, relative):
         ref_url = urlparse(request.host_url)
     test_url = urlparse(url)
     return test_url.scheme == ref_url.scheme and \
-           test_url.netloc == ref_url.netloc and \
-           test_url.path != request.path and \
-           test_url.path.startswith('/')
+        test_url.netloc == ref_url.netloc and \
+        test_url.path != request.path and \
+        test_url.path.startswith('/')
 
 
 def nocache(fn):
