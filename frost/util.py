@@ -8,7 +8,7 @@ from werkzeug.http import http_date
 try:
     from urllib.parse import urlparse, urljoin
 except ImportError:
-    from urllib import urlparse, urljoin
+    from urlparse import urlparse, urljoin
 
 
 def is_safe_url(url, relative):
