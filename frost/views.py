@@ -40,7 +40,7 @@ def home():
 @views.route('/login', methods=['POST'])
 def login():
     redirect_uri = request.host_url + 'oauth'
-    if is_safe_url(request.referrer, False):
+    if request.referrer and is_safe_url(request.referrer, False):
         next = request.referrer[len(request.host_url) - 1:]
         redirect_uri += '?next=' + quote(next, safe='')
     query = [
