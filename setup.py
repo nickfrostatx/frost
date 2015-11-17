@@ -17,6 +17,7 @@ with open('HISTORY.rst') as f:
 requirements = [
     'Flask',
     'flask-hookserver',
+    'redis',
     'requests',
 ]
 if sys.version_info < (3, 3):
