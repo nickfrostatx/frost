@@ -6,9 +6,9 @@ from flask import make_response, request
 from functools import wraps
 from werkzeug.http import http_date
 try:
-    from urllib.parse import urlparse, urljoin
+    from urllib.parse import urlparse
 except ImportError:
-    from urlparse import urlparse, urljoin
+    from urlparse import urlparse
 
 
 def is_safe_url(url, relative):
