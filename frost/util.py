@@ -11,13 +11,17 @@ except ImportError:
     from urlparse import urlparse, urljoin
 
 
-def is_safe_url(url):
-    """Return whether the url is on the app's host."""
-    ref_url = urlparse(request.host_url)
-    test_url = urlparse(urljoin(request.host_url, url))
-    return (test_url.scheme == ref_url.scheme and
-            ref_url.netloc == test_url.netloc and
-            test_url.path != request.path)
+def is_safe_url(url, relative):
+    """Return whether the url is safe for redirection."""
+    if relative:
+        ref_url = urlparse('')
+    else:
+        ref_url = urlparse(request.host_url)
+    test_url = urlparse(url)
+    return test_url.scheme == ref_url.scheme and \
+           test_url.netloc == ref_url.netloc and \
+           test_url.path != request.path and \
+           test_url.path.startswith('/')
 
 
 def nocache(fn):

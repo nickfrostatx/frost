@@ -9,9 +9,9 @@ from .model import get_repos, get_repo, get_repo_status
 from .util import is_safe_url, nocache
 import requests
 try:
-    from urllib.parse import quote
+    from urllib.parse import quote, urlencode
 except ImportError:
-    from urllib import quote
+    from urllib import quote, urlencode
 
 
 views = Blueprint('views', __name__)
@@ -39,15 +39,18 @@ def home():
 
 @views.route('/login', methods=['POST'])
 def login():
-    client_id = current_app.config['GITHUB_CLIENT_ID']
-    scopes = ','.join(['write:repo_hook', 'repo:status', 'repo_deployment',
-                       'read:org'])
-    state = 'my unique  state str'
-
-    redirect_uri = 'http://localhost:5000/oauth'
-
-    qs = ('client_id={0}&scope={1}&state={2}&redirect_uri={3}'
-          .format(client_id, scopes, state, redirect_uri))
+    redirect_uri = request.host_url + 'oauth'
+    if is_safe_url(request.referrer, False):
+        next = request.referrer[len(request.host_url) - 1:]
+        redirect_uri += '?next=' + quote(next, safe='')
+    query = [
+        ('client_id', current_app.config['GITHUB_CLIENT_ID']),
+        ('scopes', ','.join(['write:repo_hook', 'repo:status',
+                             'repo_deployment', 'read:org'])),
+        ('state', 'my unique  state str'),
+        ('redirect_uri', redirect_uri),
+    ]
+    qs = urlencode(query)
     return redirect('https://github.com/login/oauth/authorize?' + qs, code=303)
 
 
@@ -62,8 +65,8 @@ def oauth():
     except exceptions.GitHubError as e:
         abort(503)
 
-    next = request.referrer
-    if not next or not is_safe_url(next):
+    next = request.args.get('next', '/')
+    if not next or not is_safe_url(next, True):
         next = request.host_url
     return redirect(next, code=302)
 
