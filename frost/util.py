@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 """Utility functions."""
 
+from base64 import urlsafe_b64encode
 from datetime import datetime, timedelta
 from flask import make_response, request
 from functools import wraps
+from math import ceil
 from werkzeug.http import http_date
+import os
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -36,3 +39,11 @@ def nocache(fn):
         del resp.headers['Last-Modified']
         return resp
     return wrapped
+
+
+def random_string(size):
+    """Generate a random base64 string from urandom."""
+    if size % 4 != 0:
+        raise AssertionError('random_string expects a multiple of 4')
+    n_bytes = size * 3 // 4
+    return urlsafe_b64encode(os.urandom(n_bytes))

@@ -4,6 +4,7 @@
 import flask
 import frost.util
 import json
+import pytest
 try:
     from urllib.parse import quote
 except ImportError:
@@ -97,3 +98,16 @@ def test_is_safe_url_relative():
         assert is_safe('http://localhost') == False
         assert is_safe('ftp://localhost/abc') == False
         assert is_safe('http://localhost/abc') == False
+
+
+def test_random_string():
+    with pytest.raises(AssertionError):
+        frost.util.random_string(1)
+    with pytest.raises(AssertionError):
+        frost.util.random_string(3)
+    with pytest.raises(AssertionError):
+        frost.util.random_string(39)
+
+    assert len(frost.util.random_string(4)) == 4
+    assert len(frost.util.random_string(8)) == 8
+    assert len(frost.util.random_string(40)) == 40
