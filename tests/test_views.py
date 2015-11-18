@@ -21,11 +21,6 @@ def client():
     return app.test_client()
 
 
-def test_home(client, db):
-    rv = client.get('/')
-    assert rv.status_code == 200
-
-
 def test_login(client, db):
     base = ('https://github.com/login/oauth/authorize?client_id=deadbeefcafe'
             '&scopes=write%3Arepo_hook%2Crepo%3Astatus%2Crepo_deployment%2C'
@@ -154,6 +149,21 @@ def test_oauth_503(client, db, serving_app):
     client.application.github.base_url = serving_app.url
     rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.status_code == 503
+
+
+def test_home_unauthed(client, db):
+    rv = client.get('/')
+    assert rv.status_code == 200
+    assert b'class="auth-btn"' in rv.data
+
+
+def test_home_authed(client, db):
+    client.set_cookie('localhost', 'session', 'auth')
+
+    rv = client.get('/')
+    assert rv.status_code == 200
+    assert b'nickfrostatx/frost' in rv.data
+    assert b'nickfrostatx/flask-hookserver' in rv.data
 
 
 def test_repo_page(client, db):
