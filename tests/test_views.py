@@ -2,7 +2,7 @@
 """Test HTML views."""
 
 from frost.views import views
-from util import serving_app
+from util import serving_app, db
 import frost.github
 import contextlib
 import flask
@@ -28,12 +28,12 @@ def user_set(app, user):
         yield
 
 
-def test_home(client):
+def test_home(client, db):
     rv = client.get('/')
     assert rv.status_code == 200
 
 
-def test_login(client):
+def test_login(client, db):
     base = ('https://github.com/login/oauth/authorize?client_id=deadbeefcafe'
             '&scopes=write%3Arepo_hook%2Crepo%3Astatus%2Crepo_deployment%2C'
             'read%3Aorg&state=my+unique++state+str'
@@ -55,7 +55,7 @@ def test_login(client):
     assert rv.headers.get('Location') == base + '%3Fnext%3D%252Fabc'
 
 
-def test_oauth(client, serving_app):
+def test_oauth(client, db, serving_app):
     client.application.github.base_url = serving_app.url
 
     @serving_app.route('/login/oauth/access_token', methods=['POST'])
@@ -86,7 +86,7 @@ def test_oauth(client, serving_app):
     assert rv.headers.get('Location') == 'http://localhost/'
 
 
-def test_oauth_400(client):
+def test_oauth_400(client, db):
     rv = client.get('/oauth?code=mycode')
     assert rv.status_code == 400
 
@@ -97,26 +97,26 @@ def test_oauth_400(client):
     assert rv.status_code == 400
 
 
-def test_oauth_503(client):
+def test_oauth_503(client, db):
     client.application.github.base_url = 'http://0.0.0.0:1234'
     rv = client.get('/oauth?state=my+unique++state+str&code=mycode')
     assert rv.status_code == 503
 
 
-def test_home_invalid_user(client):
+def test_home_invalid_user(client, db):
     with user_set(client.application, 'fakeuser'):
         rv = client.get('/')
         # assert rv.status_code == 500
 
 
-def test_repo_page(client):
+def test_repo_page(client, db):
     rv = client.get('/nickfrostatx/frost')
     assert b'nickfrostatx' in rv.data
     assert b'frost' in rv.data
     assert rv.status_code == 200
 
 
-def test_invalid_repo_page(client):
+def test_invalid_repo_page(client, db):
     rv = client.get('/nickfrostatx/fakerepo')
     assert rv.status_code == 404
 

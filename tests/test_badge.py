@@ -2,6 +2,7 @@
 """Test the badge."""
 
 from frost.badge import badge
+from util import db
 import flask
 import werkzeug
 import pytest
@@ -22,7 +23,7 @@ def validate_headers(rv):
     assert rv.headers['Pragma'] == 'no-cache'
 
 
-def test_valid_badges(client):
+def test_valid_badges(client, db):
     rv = client.get('/nickfrostatx/frost.svg')
     validate_headers(rv)
     assert b'build' in rv.data
@@ -63,7 +64,7 @@ def test_custom_badge_error(client):
     assert rv.status_code == 400
 
 
-def test_404_badge(client):
+def test_404_badge(client, db):
     rv = client.get('/nickfrostatx/fakerepo.svg')
     validate_headers(rv)
     assert b'build' in rv.data
@@ -75,11 +76,3 @@ def test_404_badge(client):
     assert b'build' in rv.data
     assert b'invalid' in rv.data
     assert rv.status_code == 404
-
-
-def test_500_badge(client):
-    rv = client.get('/error/error.svg')
-    validate_headers(rv)
-    assert b'build' in rv.data
-    assert b'error' in rv.data
-    assert rv.status_code == 500

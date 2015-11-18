@@ -4,7 +4,7 @@
       {%- for repo in repos %}
       <div class="repo">
         <div class="name {{ repo.status }}">
-          <a href="/{{ repo.user }}/{{ repo.name }}">{{ repo.user }}/{{ repo.name }}</a>
+          <a href="/{{ g.user }}/{{ repo.name }}">{{ user }}/{{ repo.name }}</a>
         </div>
       </div>
       {%- endfor %}

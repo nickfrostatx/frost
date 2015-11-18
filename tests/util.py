@@ -1,11 +1,50 @@
 # -*- coding: utf-8 -*-
 """Shared utility functions."""
 
+from datetime import datetime
 from werkzeug.serving import ThreadedWSGIServer
+import fakeredis
 import flask
+import frost.model
 import pytest
 import random
 import threading
+
+
+@pytest.fixture
+def db(request):
+    """Inject our fake database."""
+    r = fakeredis.FakeRedis()
+    frost.model._redis = r
+
+    def fin():
+        frost.model._redis = None
+        r.flushdb()
+    request.addfinalizer(fin)
+
+    r.hmset('repo:nickfrostatx:frost', {
+        'status': 'passing',
+        'build_status': 'passing',
+        'last_update': datetime(2015, 11, 14, 11, 30, 43),
+    })
+    r.hmset('repo:nickfrostatx:flask-hookserver', {
+        'status': 'progress',
+        'build_status': 'error',
+        'last_update': datetime(2015, 11, 14, 11, 30, 43),
+    })
+    r.hmset('repo:nickfrostatx:nass', {
+        'status': 'failing',
+        'build_status': 'failing',
+        'last_update': datetime(2015, 11, 14, 11, 10, 27),
+    })
+    r.hmset('repo:nickfrostatx:corral', {
+        'status': 'inactive',
+        'build_status': 'unknown',
+        'last_update': datetime(2015, 11, 14, 11, 0, 5),
+    })
+    r.rpush('repos:nickfrostatx', 'frost', 'flask-hookserver', 'nass',
+            'corral')
+    return r
 
 
 @pytest.fixture

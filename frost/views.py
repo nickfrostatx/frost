@@ -75,6 +75,6 @@ def oauth():
 def repo_page(user, repo):
     try:
         r = get_repo(user, repo)
-    except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
+    except exceptions.NoSuchRepoException:
         abort(404)
-    return render_template('views/repo.html', repo=r)
+    return render_template('views/repo.html', user=user, name=repo, repo=r)

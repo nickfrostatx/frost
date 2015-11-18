@@ -2,8 +2,8 @@
 
 {% block content %}
       <div class="title {{ repo.status }}">
-        <a href="/{{ repo.user }}">{{ repo.user }}</a> /
-        <a href="/{{ repo.user }}/{{ repo.name }}">{{ repo.name }}</a>
+        <a href="/{{ user }}">{{ user }}</a> /
+        <a href="/{{ user }}/{{ name }}">{{ name }}</a>
       </div>
-      <img src="{{ request.url_root }}{{ repo.user }}/{{ repo.name }}.svg" />
+      <img src="{{ request.url_root }}{{ user }}/{{ name }}.svg" />
 {%- endblock %}

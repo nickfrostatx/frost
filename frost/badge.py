@@ -49,5 +49,3 @@ def view(user, repo):
         exc = NotFound()
         exc.status = 'invalid'
         raise exc
-    except KeyError:
-        return render_badge('error'), 500
