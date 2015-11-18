@@ -54,7 +54,7 @@ def test_make_request(github, serving_app):
         'X-Something': 'abc',
     }
     data = github.make_request('GET', '/', headers=headers)
-    assert data == {'accept': 'application/json',
+    assert data == {'accept': 'text/html',
                     'something': 'abc',
                     }
 

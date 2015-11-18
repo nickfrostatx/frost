@@ -36,9 +36,8 @@ class GitHub(object):
         """Make the actual request, and handle any errors."""
         url = self.base_url + url
 
-        if 'headers' not in kw:
-            kw['headers'] = {}
-        kw['headers']['Accept'] = 'application/json'
+        kw.setdefault('headers', {})
+        kw['headers'].setdefault('Accept', 'application/json')
 
         try:
             response = self.session.request(method, url, *a, **kw)
