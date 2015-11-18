@@ -72,7 +72,7 @@ def test_oauth(client, db, serving_app):
 
     @serving_app.route('/api/user')
     def user():
-        return flask.jsonify({'login': 'nickfrostatx'})
+        return flask.jsonify({'login': 'someuser'})
 
     client.set_cookie('localhost', 'session', 'noauth')
 
@@ -99,9 +99,9 @@ def test_oauth(client, db, serving_app):
 
     assert frost.model.get_session_data('noauth') == {
         'csrf': 'somecsrf',
-        'user': 'nickfrostatx',
+        'user': 'someuser',
     }
-    assert frost.model.user_exists('nickfrostatx')
+    assert frost.model.user_exists('someuser')
 
 
 def test_oauth_403(client, db):
