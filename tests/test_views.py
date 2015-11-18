@@ -14,18 +14,10 @@ def client():
     app = flask.Flask(__name__)
     app.config['GITHUB_CLIENT_ID'] = 'deadbeefcafe'
     app.config['GITHUB_CLIENT_SECRET'] = 'sekrit'
+    app.config['DEBUG'] = True
     app.github = frost.github.GitHub(app)
     app.register_blueprint(views)
     return app.test_client()
-
-
-@contextlib.contextmanager
-def user_set(app, user):
-    """Manually set g.user."""
-    def handler(sender, **kwargs):
-        flask.g.user = user
-    with flask.appcontext_pushed.connected_to(handler, app):
-        yield
 
 
 def test_home(client, db):
@@ -132,12 +124,6 @@ def test_oauth_503(client, db, serving_app):
     client.application.github.base_url = serving_app.url
     rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.status_code == 503
-
-
-def test_home_invalid_user(client, db):
-    with user_set(client.application, 'fakeuser'):
-        rv = client.get('/')
-        # assert rv.status_code == 500
 
 
 def test_repo_page(client, db):
