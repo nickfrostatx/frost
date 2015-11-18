@@ -15,8 +15,14 @@ def db(request):
     """Inject our fake database."""
     import frost.model
 
-    r = fakeredis.FakeRedis()
-    frost.model._redis = r
+    frost.model.redis_cls = fakeredis.FakeRedis
+
+    app = flask.Flask(__name__)
+    app.config['REDIS_URL'] = ''
+    app_context = app.app_context()
+    app_context.push()
+    r = frost.model.get_redis()
+    app_context.pop()
 
     def fin():
         frost.model._redis = None

@@ -7,6 +7,7 @@ import flask
 import redis
 
 
+redis_cls = redis.StrictRedis
 _redis = None
 
 
@@ -14,7 +15,7 @@ def get_redis():
     """Cached redis instance that won't get created until first used."""
     global _redis
     if _redis is None:
-        _redis = redis.from_url(flask.current_app.config['REDIS_URL'])
+        _redis = redis_cls.from_url(flask.current_app.config['REDIS_URL'])
     return _redis
 
 
