@@ -26,7 +26,8 @@ def home():
     if 'user' not in g.session:
         return render_template('views/auth.html')
     repos = get_repos(g.session['user'])
-    return render_template('views/home.html', repos=repos)
+    return render_template('views/repos.html', user=g.session['user'],
+                           repos=repos)
 
 
 @views.route('/login')
