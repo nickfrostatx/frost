@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Badge blueprint."""
 
-from flask import Blueprint
+from flask import Blueprint, abort
 from flask.helpers import send_from_directory
 from werkzeug.exceptions import NotFound, InternalServerError
 from . import exceptions
@@ -33,11 +33,7 @@ def no_cache(response):
 
 @errorhandler(badge)
 def error_badge(e):
-    try:
-        status = e.status
-    except AttributeError:
-        status = 'error'
-    return render_badge(status), e.code
+    return render_badge('invalid'), e.code
 
 
 @badge.route('/<user>/<repo>.svg')
@@ -46,6 +42,4 @@ def view(user, repo):
         status = get_repo_status(user, repo)
         return render_badge(status)
     except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
-        exc = NotFound()
-        exc.status = 'invalid'
-        raise exc
+        abort(404)

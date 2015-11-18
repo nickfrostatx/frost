@@ -4,7 +4,6 @@
 from frost.badge import badge
 from util import db
 import flask
-import werkzeug
 import pytest
 
 
@@ -50,18 +49,17 @@ def test_valid_badges(client, db):
 
 
 def test_custom_badge_error(client):
-    def do400():
-        exc = werkzeug.exceptions.BadRequest()
-        raise exc
+    def do418():
+        flask.abort(418)
 
     # Doesn't touch the module-level badge object \m/
-    client.application.add_url_rule('/400', 'badge.do400', do400)
+    client.application.add_url_rule('/418', 'badge.do418', do418)
 
-    rv = client.get('/400')
+    rv = client.get('/418')
     validate_headers(rv)
     assert b'build' in rv.data
-    assert b'error' in rv.data
-    assert rv.status_code == 400
+    assert b'invalid' in rv.data
+    assert rv.status_code == 418
 
 
 def test_404_badge(client, db):
