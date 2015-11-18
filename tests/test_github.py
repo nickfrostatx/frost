@@ -29,14 +29,21 @@ def test_github_setup(github):
 
 def test_make_request(github, serving_app):
     github.base_url = serving_app.url
+    github.api_url = serving_app.url + '/api'
 
     @serving_app.route('/')
     def home():
+        return flask.jsonify({'msg': 'The base domain.'})
+
+    @serving_app.route('/api/')
+    def api():
         data = {
             'accept': flask.request.headers.get('Accept'),
             'something': flask.request.headers.get('X-Something'),
         }
         return flask.jsonify(data)
+
+    data = github.make_request('GET', '/', base_url=github.base_url)
 
     data = github.make_request('GET', '/')
     assert data == {'accept': 'application/json',
@@ -61,25 +68,25 @@ def test_make_request(github, serving_app):
 
 def test_no_connection(github):
     with pytest.raises(frost.exceptions.GitHubError) as exc:
-        github.base_url = 'http://0.0.0.0:1234'
+        github.api_url = 'http://0.0.0.0:1234'
         github.make_request('GET', '/')
     assert 'Failed to communicate with GitHub' in str(exc)
 
 
 def test_bad_status(github, serving_app):
-    github.base_url = serving_app.url
+    github.api_url = serving_app.url
 
     @serving_app.route('/')
     def home():
-        return flask.jsonify({'message': 'No sir.'}), 400
+        return flask.jsonify({'message': 'I\'m a teapot.'}), 418
 
     @serving_app.route('/nomsg')
     def nomsg():
-        return flask.jsonify({}), 400
+        return flask.jsonify({}), 418
 
     with pytest.raises(frost.exceptions.GitHubError) as exc:
         github.make_request('GET', '/')
-    assert '400: No sir.' in str(exc)
+    assert '418: I\'m a teapot.' in str(exc)
 
     with pytest.raises(frost.exceptions.GitHubError) as exc:
         github.make_request('GET', '/nomsg')
@@ -87,7 +94,7 @@ def test_bad_status(github, serving_app):
 
 
 def test_invalid_json(github, serving_app):
-    github.base_url = serving_app.url
+    github.api_url = serving_app.url
 
     @serving_app.route('/text')
     def home():
@@ -117,8 +124,8 @@ def test_get_access_token(github, serving_app):
             return jsonify({}), 403
 
         code = flask.request.args.get('code', '')
-        if code == 'bad_request':
-            return flask.jsonify({}), 400
+        if code == 'teapot':
+            return flask.jsonify({}), 418
         elif code == 'missing':
             return flask.jsonify({})
         elif code == 'bad_type':
@@ -128,10 +135,41 @@ def test_get_access_token(github, serving_app):
         else:
             return flask.jsonify({'access_token': code + code})
 
-    for t in ('bad_request', 'missing', 'bad_type', 'bad_type2'):
+    for t in ('teapot', 'missing', 'bad_type', 'bad_type2'):
         with pytest.raises(frost.exceptions.GitHubError) as exc:
             github.get_access_token(t)
         assert 'Failed to communicate with GitHub' in str(exc)
 
     access_token = github.get_access_token('mycode')
     assert access_token == 'mycodemycode'
+
+
+def test_get_user(github, serving_app):
+    github.api_url = serving_app.url
+
+    @serving_app.route('/user')
+    def user():
+        client_id = flask.request.args.get('client_id')
+        client_secret = flask.request.args.get('client_secret')
+        if client_id != 'deadbeefcafe' or client_secret != 'sekrit':
+            return jsonify({}), 403
+
+        code = flask.request.args.get('access_token', '')
+        if code == 'teapot':
+            return flask.jsonify({}), 418
+        elif code == 'missing':
+            return flask.jsonify({})
+        elif code == 'bad_type':
+            return flask.jsonify({'login': 123})
+        elif code == 'bad_type2':
+            return flask.jsonify({'login': ['ab', 'cd']})
+        else:
+            return flask.jsonify({'login': code + code})
+
+    for t in ('teapot', 'missing', 'bad_type', 'bad_type2'):
+        with pytest.raises(frost.exceptions.GitHubError) as exc:
+            github.get_user(t)
+        assert 'Failed to communicate with GitHub' in str(exc)
+
+    user = github.get_user('mycode')
+    assert user == 'mycodemycode'
