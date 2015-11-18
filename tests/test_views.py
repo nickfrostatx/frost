@@ -153,17 +153,17 @@ def test_oauth_503(client, db, serving_app):
 
 def test_home_unauthed(client, db):
     rv = client.get('/')
-    assert rv.status_code == 200
     assert b'class="auth-btn"' in rv.data
+    assert rv.status_code == 200
 
 
 def test_home_authed(client, db):
     client.set_cookie('localhost', 'session', 'auth')
 
     rv = client.get('/')
-    assert rv.status_code == 200
     assert b'nickfrostatx/frost' in rv.data
     assert b'nickfrostatx/flask-hookserver' in rv.data
+    assert rv.status_code == 200
 
 
 def test_repo_page(client, db):
