@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Test the badge."""
 
-from frost.badge import badge
 from util import db
 import flask
+import frost.badge
 import pytest
 
 
@@ -11,7 +11,7 @@ import pytest
 def client():
     app = flask.Flask(__name__)
     app.config['DEBUG'] = True
-    app.register_blueprint(badge)
+    app.register_blueprint(frost.badge.badge)
     return app.test_client()
 
 

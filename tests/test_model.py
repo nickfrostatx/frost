@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Test model functions."""
 
-from datetime import datetime
 from util import db
+import datetime
 import frost.exceptions
 import frost.model
 import pytest
@@ -57,7 +57,7 @@ def test_get_repos(db):
         u'name': u'frost',
         u'status': u'passing',
         u'build_status': u'passing',
-        u'last_update': datetime(2015, 11, 14, 11, 30, 43),
+        u'last_update': datetime.datetime(2015, 11, 14, 11, 30, 43),
     }
 
 

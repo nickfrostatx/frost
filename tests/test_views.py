@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """Test HTML views."""
 
-from frost.views import views
 from util import serving_app, db
 import frost.github
 import frost.model
+import frost.views
 import contextlib
 import flask
 import pytest
@@ -17,7 +17,7 @@ def client():
     app.config['GITHUB_CLIENT_SECRET'] = 'sekrit'
     app.config['DEBUG'] = True
     app.github = frost.github.GitHub(app)
-    app.register_blueprint(views)
+    app.register_blueprint(frost.views.views)
     return app.test_client()
 
 

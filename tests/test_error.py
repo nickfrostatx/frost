@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test error handling."""
 
-from frost.error import register_error_handler, errorhandler, html_handler
+import frost.error
 import flask
 import werkzeug.exceptions
 
@@ -12,7 +12,7 @@ def test_custom_handler():
     def handler(e):
         return e.name + '\n', e.code
 
-    register_error_handler(app, handler)
+    frost.error.register_error_handler(app, handler)
 
     @app.route('/good')
     def good():
@@ -53,11 +53,11 @@ def test_blueprint_handler():
 
     def app_handler(e):
         return 'App: ' + e.name + '\n', e.code
-    register_error_handler(app, app_handler)
+    frost.error.register_error_handler(app, app_handler)
 
     def bp_handler(e):
         return 'Blueprint: ' + e.name + '\n', e.code
-    register_error_handler(bp, bp_handler)
+    frost.error.register_error_handler(bp, bp_handler)
 
     @bp.route('/good')
     def good():
@@ -97,7 +97,7 @@ def test_blueprint_handler():
 
 def test_html_handler():
     app = flask.Flask(__name__, template_folder='../frost/templates')
-    register_error_handler(app, html_handler)
+    frost.error.register_error_handler(app, frost.error.html_handler)
 
     @app.route('/good')
     def good():
@@ -129,7 +129,7 @@ def test_html_handler():
 def test_decorator():
     app = flask.Flask(__name__, template_folder='../frost/templates')
 
-    @errorhandler(app)
+    @frost.error.errorhandler(app)
     def handler(e):
         return e.name + '\n', e.code
 

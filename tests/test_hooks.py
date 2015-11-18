@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test GitHub webhooks."""
 
-from frost.hooks import hooks
+import frost.hooks
 import flask
 import json
 import pytest
@@ -10,7 +10,7 @@ import pytest
 @pytest.fixture
 def client():
     app = flask.Flask(__name__)
-    app.register_blueprint(hooks)
+    app.register_blueprint(frost.hooks.hooks)
     app.config['DEBUG'] = True
     app.config['VALIDATE_IP'] = False
     app.config['VALIDATE_SIGNATURE'] = False

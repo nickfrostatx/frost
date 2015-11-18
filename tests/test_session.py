@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Test session."""
 
+from util import db
 import flask
 import frost.session
 import json
 import pytest
-from util import db
 
 
 @pytest.fixture
