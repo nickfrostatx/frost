@@ -14,7 +14,8 @@ except ImportError:
     from urllib import quote, urlencode
 
 
-views = Blueprint('views', __name__)
+views = Blueprint('views', __name__, static_folder='static',
+                  template_folder='templates')
 
 
 @views.before_request

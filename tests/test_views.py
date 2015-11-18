@@ -11,8 +11,7 @@ import pytest
 
 @pytest.fixture
 def client():
-    app = flask.Flask(__name__, template_folder='../frost/templates',
-                      static_folder='../frost/static')
+    app = flask.Flask(__name__)
     app.config['GITHUB_CLIENT_ID'] = 'deadbeefcafe'
     app.config['GITHUB_CLIENT_SECRET'] = 'sekrit'
     app.github = frost.github.GitHub(app)
