@@ -3,10 +3,11 @@
 
 from flask import Blueprint, abort, current_app, g, request, render_template, \
                   redirect
+from flask.helpers import send_from_directory
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
 from .model import get_repos, get_repo, get_repo_status
-from .util import is_safe_url, nocache
+from .util import is_safe_url
 import requests
 try:
     from urllib.parse import quote, urlencode
@@ -82,7 +83,6 @@ def repo_page(user, repo):
 
 
 @views.route('/<user>/<repo>.svg')
-@nocache
 def badge(user, repo):
     try:
         status = get_repo_status(user, repo)
@@ -105,4 +105,10 @@ def badge(user, repo):
     else:
         badge_path = 'badges/error.svg'
 
-    return current_app.send_static_file(badge_path), status_code
+    resp = send_from_directory(views.static_folder, badge_path,
+                               add_etags=False, cache_timeout=-2)
+    resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+    resp.headers['Pragma'] = 'no-cache'
+    del resp.headers['Last-Modified']
+    resp.status_code = status_code
+    return resp

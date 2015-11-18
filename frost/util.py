@@ -2,11 +2,8 @@
 """Utility functions."""
 
 from base64 import urlsafe_b64encode
-from datetime import datetime, timedelta
-from flask import make_response, request
-from functools import wraps
+from flask import request
 from math import ceil
-from werkzeug.http import http_date
 import os
 try:
     from urllib.parse import urlparse
@@ -25,20 +22,6 @@ def is_safe_url(url, relative):
         test_url.netloc == ref_url.netloc and \
         test_url.path != request.path and \
         test_url.path.startswith('/')
-
-
-def nocache(fn):
-    """Decorate the view fn to override Cache-Control header."""
-    @wraps(fn)
-    def wrapped(*a, **kw):
-        resp = make_response(fn(*a, **kw))
-        resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
-        resp.headers['Pragma'] = 'no-cache'
-        resp.headers['Expires'] = http_date(datetime.now() - timedelta(0, 2))
-        del resp.headers['ETag']
-        del resp.headers['Last-Modified']
-        return resp
-    return wrapped
 
 
 def random_string(size):
