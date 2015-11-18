@@ -105,7 +105,6 @@ def test_oauth(client, db, serving_app):
     assert rv.headers.get('Location') == 'http://localhost/'
 
 
-
 def test_oauth_403(client, db):
     rv = client.get('/oauth?code=mycode')
     assert rv.status_code == 403
