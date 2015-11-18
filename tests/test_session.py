@@ -46,7 +46,7 @@ def test_unauthed_session(client, db):
     assert rv.status_code == 200
 
 
-def test_unauthed_session(client, db):
+def test_authed_session(client, db):
     rv = client.get('/', headers={'Cookie': 'session=auth'})
     data = json.loads(rv.data.decode())
     assert data == {
