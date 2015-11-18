@@ -166,6 +166,16 @@ def test_home_authed(client, db):
     assert rv.status_code == 200
 
 
+def test_user_page(client, db):
+    rv = client.get('/nickfrostatx')
+    assert b'nickfrostatx/frost' in rv.data
+    assert b'nickfrostatx/flask-hookserver' in rv.data
+    assert rv.status_code == 200
+
+    rv = client.get('/fakeuser')
+    assert rv.status_code == 404
+
+
 def test_repo_page(client, db):
     rv = client.get('/nickfrostatx/frost')
     assert b'/nickfrostatx/frost' in rv.data

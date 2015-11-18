@@ -69,6 +69,15 @@ def oauth():
     return redirect(next, code=302)
 
 
+@views.route('/<user>')
+def user_page(user):
+    try:
+        repos = get_repos(user)
+    except exceptions.NoSuchUserException:
+        abort(404)
+    return render_template('views/repos.html', user=user, repos=repos)
+
+
 @views.route('/<user>/<repo>')
 def repo_page(user, repo):
     try:
