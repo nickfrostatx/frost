@@ -1,6 +1,9 @@
 {% extends "lib/base.html" %}
 
 {% block content %}
+      <div class="title">
+        <a href="/{{ user }}">{{ user }}</a>
+      </div>
       {%- for repo in repos %}
       <div class="repo">
         <div class="name {{ repo.status }}">
