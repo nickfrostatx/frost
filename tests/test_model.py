@@ -8,6 +8,36 @@ import frost.model
 import pytest
 
 
+def test_get_unauthed_session(db):
+    session = frost.model.get_session_data('noauth')
+    assert session == {
+        'csrf': 'somecsrf',
+    }
+
+
+def test_get_authed_session(db):
+    session = frost.model.get_session_data('auth')
+    assert session == {
+        'csrf': 'coolcsrf',
+        'user': 'nickfrostatx',
+    }
+
+
+def test_invalid_session(db):
+    with pytest.raises(frost.exceptions.NoSuchSessionException):
+        frost.model.get_session_data('fake')
+
+
+def test_store_session(db):
+    frost.model.store_session_data('somekey', {
+        'csrf': 'mycsrf',
+    })
+
+    frost.model.store_session_data('noauth', {
+        'csrf': 'mycsrf',
+    })
+
+
 def test_get_repos(db):
     repos = frost.model.get_repos('nickfrostatx')
     assert type(repos) == list
