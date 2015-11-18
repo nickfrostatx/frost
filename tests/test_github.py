@@ -43,7 +43,7 @@ def test_make_request(github, serving_app):
         }
         return flask.jsonify(data)
 
-    data = github.make_request('GET', '/', base_url=github.base_url)
+    data = github.make_request('GET', '/', base=github.base_url)
 
     data = github.make_request('GET', '/')
     assert data == {'accept': 'application/json',
@@ -121,7 +121,7 @@ def test_get_access_token(github, serving_app):
         client_id = flask.request.args.get('client_id')
         client_secret = flask.request.args.get('client_secret')
         if client_id != 'deadbeefcafe' or client_secret != 'sekrit':
-            return jsonify({}), 403
+            return flask.jsonify({}), 403
 
         code = flask.request.args.get('code', '')
         if code == 'teapot':
@@ -149,12 +149,9 @@ def test_get_user(github, serving_app):
 
     @serving_app.route('/user')
     def user():
-        client_id = flask.request.args.get('client_id')
-        client_secret = flask.request.args.get('client_secret')
-        if client_id != 'deadbeefcafe' or client_secret != 'sekrit':
-            return jsonify({}), 403
+        authorization = flask.request.headers.get('authorization', '')
+        code = authorization.split(' OAUTH-TOKEN', 1)[0]
 
-        code = flask.request.args.get('access_token', '')
         if code == 'teapot':
             return flask.jsonify({}), 418
         elif code == 'missing':

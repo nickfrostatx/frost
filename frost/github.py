@@ -19,8 +19,12 @@ class GitHub(object):
     def get_access_token(self, code):
         """Request an access token with the given code."""
         url = '/login/oauth/access_token'
-        params = {'code': code}
-        data = self.make_request('POST', url, base_url=self.base_url,
+        params = {
+            'code': code,
+            'client_id': self.client_id,
+            'client_secret': self.client_secret,
+        }
+        data = self.make_request('POST', url, base=self.base_url,
                                  params=params)
 
         try:
@@ -33,8 +37,7 @@ class GitHub(object):
 
     def get_user(self, access_token):
         """Load a user."""
-        params = {'access_token': access_token}
-        data = self.make_request('GET', '/user', params=params)
+        data = self.make_request('GET', '/user', access_token)
 
         try:
             name = data['login']
@@ -44,18 +47,17 @@ class GitHub(object):
 
         return name
 
-    def make_request(self, method, url, base_url=None, **kw):
+    def make_request(self, method, url, access_token=None, base=None, **kw):
         """Make the actual request, and handle any errors."""
-        if not base_url:
-            base_url = self.api_url
-        url = base_url + url
+        if not base:
+            base = self.api_url
+        url = base + url
 
         kw.setdefault('headers', {})
         kw['headers'].setdefault('Accept', 'application/json')
-
-        kw.setdefault('params', {})
-        kw['params'].setdefault('client_id', self.client_id)
-        kw['params'].setdefault('client_secret', self.client_secret)
+        if access_token is not None:
+            auth = '{0} OAUTH-TOKEN'.format(access_token)
+            kw['headers'].setdefault('Authorization', auth)
 
         try:
             response = self.session.request(method, url, **kw)
