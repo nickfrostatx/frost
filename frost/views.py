@@ -3,10 +3,9 @@
 
 from flask import Blueprint, abort, current_app, g, request, render_template, \
                   redirect
-from flask.helpers import send_from_directory
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
-from .model import get_repos, get_repo, get_repo_status
+from .model import get_repos, get_repo
 from .util import is_safe_url
 import requests
 try:
@@ -15,8 +14,7 @@ except ImportError:
     from urllib import quote, urlencode
 
 
-views = Blueprint('views', __name__, static_folder='static',
-                  template_folder='templates')
+views = Blueprint('views', __name__, template_folder='templates')
 
 
 @views.before_request
@@ -80,35 +78,3 @@ def repo_page(user, repo):
     except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
         abort(404)
     return render_template('views/repo.html', repo=r)
-
-
-@views.route('/<user>/<repo>.svg')
-def badge(user, repo):
-    try:
-        status = get_repo_status(user, repo)
-        status_code = 200
-    except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
-        status = 'invalid'
-        status_code = 404
-    except KeyError:
-        status = 'error'
-        status_code = 500
-
-    if status == 'passing':
-        badge_path = 'badges/passing.svg'
-    elif status == 'failing':
-        badge_path = 'badges/failing.svg'
-    elif status == 'unknown':
-        badge_path = 'badges/unknown.svg'
-    elif status == 'invalid':
-        badge_path = 'badges/invalid.svg'
-    else:
-        badge_path = 'badges/error.svg'
-
-    resp = send_from_directory(views.static_folder, badge_path,
-                               add_etags=False, cache_timeout=-2)
-    resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
-    resp.headers['Pragma'] = 'no-cache'
-    del resp.headers['Last-Modified']
-    resp.status_code = status_code
-    return resp
