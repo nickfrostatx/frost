@@ -104,6 +104,29 @@ def test_oauth(client, db, serving_app):
     assert frost.model.user_exists('someuser')
 
 
+def test_oauth_existing(client, db, serving_app):
+    client.application.github.base_url = serving_app.url
+    client.application.github.api_url = serving_app.url + '/api'
+
+    @serving_app.route('/login/oauth/access_token', methods=['POST'])
+    def access_token():
+        return flask.jsonify({'access_token': flask.request.args['code']})
+
+    @serving_app.route('/api/user')
+    def user():
+        return flask.jsonify({'login': 'nickfrostatx'})
+
+    client.set_cookie('localhost', 'session', 'noauth')
+
+    rv = client.get('/oauth?state=somecsrf&code=mycode')
+    assert rv.headers.get('Location') == 'http://localhost/'
+
+    assert frost.model.get_session_data('noauth') == {
+        'csrf': 'somecsrf',
+        'user': 'nickfrostatx',
+    }
+
+
 def test_oauth_403(client, db):
     rv = client.get('/oauth?code=mycode')
     assert rv.status_code == 403
