@@ -89,6 +89,7 @@ def test_random_string():
     with pytest.raises(AssertionError):
         frost.util.random_string(39)
 
+    assert isinstance(frost.util.random_string(4), type(u''))
     assert len(frost.util.random_string(4)) == 4
     assert len(frost.util.random_string(8)) == 8
     assert len(frost.util.random_string(40)) == 40
