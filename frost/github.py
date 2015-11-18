@@ -56,8 +56,7 @@ class GitHub(object):
         kw.setdefault('headers', {})
         kw['headers'].setdefault('Accept', 'application/json')
         if access_token is not None:
-            auth = 'token {0}'.format(access_token)
-            kw['headers'].setdefault('Authorization', auth)
+            kw['headers'].setdefault('Authorization', 'token ' + access_token)
 
         try:
             response = self.session.request(method, url, **kw)
