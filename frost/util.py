@@ -2,13 +2,25 @@
 """Utility functions."""
 
 from base64 import urlsafe_b64encode
-from flask import request
+from flask import request, g, abort
+from functools import wraps
 from math import ceil
 import os
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
+
+
+def check_state(fn):
+    """Require session CSRF token in state query parameter."""
+    @wraps(fn)
+    def inner(*a, **kw):
+        state = request.args.get('state')
+        if not state or state != g.session['csrf']:
+            abort(403)
+        return fn(*a, **kw)
+    return inner
 
 
 def is_safe_url(url, relative):

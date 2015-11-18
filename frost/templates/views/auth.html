@@ -2,11 +2,9 @@
 
 {% block content %}
       <div class="middle">
-        <form action="/login" method="post">
-          <a class="auth-btn" href="javascript:void(0)" onclick="this.parentNode.submit()">
-            <span class="auth-big">Sign in</span><br />
-            <span class="auth-small">With GitHub</span>
-          </a>
-        </form>
+        <a class="auth-btn" href="/login?state={{ g.session.csrf }}">
+          <span class="auth-big">Sign in</span><br />
+          <span class="auth-small">With GitHub</span>
+        </a>
       </div>
 {%- endblock %}

@@ -36,70 +36,102 @@ def test_home(client, db):
 def test_login(client, db):
     base = ('https://github.com/login/oauth/authorize?client_id=deadbeefcafe'
             '&scopes=write%3Arepo_hook%2Crepo%3Astatus%2Crepo_deployment%2C'
-            'read%3Aorg&state=my+unique++state+str'
+            'read%3Aorg&state=somecsrf'
             '&redirect_uri=http%3A%2F%2Flocalhost%2Foauth')
 
-    rv = client.post('/login')
+    client.set_cookie('localhost', 'session', 'noauth')
+    url = '/login?state=somecsrf'
+
+    rv = client.get(url)
     assert rv.headers.get('Location') == base
 
-    rv = client.post('/login', headers={'Referer': '/abc'})
+    rv = client.get(url, headers={'Referer': '/abc'})
     assert rv.headers.get('Location') == base
 
-    rv = client.post('/login', headers={'Referer': 'http://example.com/abc'})
+    rv = client.get(url, headers={'Referer': 'http://example.com/abc'})
     assert rv.headers.get('Location') == base
 
-    rv = client.post('/login', headers={'Referer': 'http://localhost:5000/ab'})
+    rv = client.get(url, headers={'Referer': 'http://localhost:5000/ab'})
     assert rv.headers.get('Location') == base
 
-    rv = client.post('/login', headers={'Referer': 'http://localhost/abc'})
+    rv = client.get(url, headers={'Referer': 'http://localhost/abc'})
     assert rv.headers.get('Location') == base + '%3Fnext%3D%252Fabc'
+
+
+def test_oauth_403(client, db):
+    rv = client.get('/login?code=mycode')
+    assert rv.status_code == 403
+
+    rv = client.get('/login?state=&code=mycode')
+    assert rv.status_code == 403
+
+    rv = client.get('/login?state=fake&code=mycode')
+    assert rv.status_code == 403
 
 
 def test_oauth(client, db, serving_app):
     client.application.github.base_url = serving_app.url
+    client.application.github.api_url = serving_app.url + '/api'
 
     @serving_app.route('/login/oauth/access_token', methods=['POST'])
     def access_token():
         return flask.jsonify({'access_token': flask.request.args['code']})
 
-    client.application.github.get_access_token('mycode')
+    @serving_app.route('/api/user')
+    def user():
+        return flask.jsonify({'login': 'nickfrostatx'})
 
-    rv = client.get('/oauth?state=my+unique++state+str&code=mycode')
+    client.set_cookie('localhost', 'session', 'noauth')
+
+    rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.headers.get('Location') == 'http://localhost/'
 
-    rv = client.get('/oauth?state=my+unique++state+str&code=mycode&next=/abc')
+    rv = client.get('/oauth?state=somecsrf&code=mycode&next=/abc')
     assert rv.headers.get('Location') == 'http://localhost/abc'
 
-    rv = client.get('/oauth?state=my+unique++state+str&code=mycode&next=abc')
+    rv = client.get('/oauth?state=somecsrf&code=mycode&next=abc')
     assert rv.headers.get('Location') == 'http://localhost/'
 
-    rv = client.get('/oauth?state=my+unique++state+str&code=mycode&next='
+    rv = client.get('/oauth?state=somecsrf&code=mycode&next='
                     'http%3A%2F%2Fabc')
     assert rv.headers.get('Location') == 'http://localhost/'
 
-    rv = client.get('/oauth?state=my+unique++state+str&code=mycode&next='
+    rv = client.get('/oauth?state=somecsrf&code=mycode&next='
                     'http%3A%2F%2F%2Fabc')
     assert rv.headers.get('Location') == 'http://localhost/'
 
-    rv = client.get('/oauth?state=my+unique++state+str&code=mycode&next='
+    rv = client.get('/oauth?state=somecsrf&code=mycode&next='
                     'http%3A%2F%2Flocalhost%2Fabc')
     assert rv.headers.get('Location') == 'http://localhost/'
 
 
-def test_oauth_400(client, db):
+
+def test_oauth_403(client, db):
     rv = client.get('/oauth?code=mycode')
-    assert rv.status_code == 400
+    assert rv.status_code == 403
 
     rv = client.get('/oauth?state=&code=mycode')
-    assert rv.status_code == 400
+    assert rv.status_code == 403
 
     rv = client.get('/oauth?state=fake&code=mycode')
-    assert rv.status_code == 400
+    assert rv.status_code == 403
 
 
-def test_oauth_503(client, db):
+def test_oauth_503(client, db, serving_app):
     client.application.github.base_url = 'http://0.0.0.0:1234'
-    rv = client.get('/oauth?state=my+unique++state+str&code=mycode')
+    client.application.github.api_url = 'http://0.0.0.0:1234'
+
+    @serving_app.route('/login/oauth/access_token', methods=['POST'])
+    def access_token():
+        return flask.jsonify({'access_token': flask.request.args['code']})
+
+    client.set_cookie('localhost', 'session', 'noauth')
+
+    rv = client.get('/oauth?state=somecsrf&code=mycode')
+    assert rv.status_code == 503
+
+    client.application.github.base_url = serving_app.url
+    rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.status_code == 503
 
 
