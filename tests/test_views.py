@@ -111,8 +111,7 @@ def test_home_invalid_user(client, db):
 
 def test_repo_page(client, db):
     rv = client.get('/nickfrostatx/frost')
-    assert b'nickfrostatx' in rv.data
-    assert b'frost' in rv.data
+    assert b'/nickfrostatx/frost' in rv.data
     assert rv.status_code == 200
 
 
