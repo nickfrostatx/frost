@@ -5,7 +5,6 @@ from datetime import datetime
 from werkzeug.serving import ThreadedWSGIServer
 import fakeredis
 import flask
-import frost.model
 import pytest
 import random
 import threading
@@ -14,6 +13,8 @@ import threading
 @pytest.fixture
 def db(request):
     """Inject our fake database."""
+    import frost.model
+
     r = fakeredis.FakeRedis()
     frost.model._redis = r
 
