@@ -11,6 +11,34 @@ except ImportError:
     from urllib import quote
 
 
+def test_check_state():
+    app = flask.Flask(__name__)
+
+    @app.before_request
+    def fake_session():
+        flask.g.session = {
+            'csrf': 'somecsrf',
+        }
+
+    @app.route('/')
+    @frost.util.check_state
+    def home():
+        return 'abc'
+
+    with app.test_client() as client:
+        rv = client.get('/')
+        assert rv.status_code == 403
+
+        rv = client.get('/?state=')
+        assert rv.status_code == 403
+
+        rv = client.get('/?state=fake')
+        assert rv.status_code == 403
+
+        rv = client.get('/?state=somecsrf')
+        assert rv.status_code == 200
+
+
 def test_is_safe_url_absolute():
     app = flask.Flask(__name__)
 
