@@ -4,11 +4,14 @@
 from flask import Flask
 from . import __name__ as package_name
 import os
+import redis
 
 
 def create_app():
     """Return an instance of the main Flask application."""
     app = Flask(package_name)
+
+    app.config.setdefault('REDIS_URL', '')
 
     from .github import GitHub
     app.github = GitHub(app)

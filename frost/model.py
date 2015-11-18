@@ -14,9 +14,7 @@ def get_redis():
     """Cached redis instance that won't get created until first used."""
     global _redis
     if _redis is None:
-        redis_cls = flask.current_app.config['REDIS_CLS']
-        url = flask.current_app.config['REDIS_URL']
-        _redis = redis_cls(url)
+        _redis = redis.from_url(flask.current_app.config['REDIS_URL'])
     return _redis
 
 
