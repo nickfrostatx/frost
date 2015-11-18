@@ -29,4 +29,4 @@ def random_string(size):
     if size % 4 != 0:
         raise AssertionError('random_string expects a multiple of 4')
     n_bytes = size * 3 // 4
-    return urlsafe_b64encode(os.urandom(n_bytes))
+    return urlsafe_b64encode(os.urandom(n_bytes)).decode('utf-8')
