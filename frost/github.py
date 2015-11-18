@@ -56,7 +56,7 @@ class GitHub(object):
         kw.setdefault('headers', {})
         kw['headers'].setdefault('Accept', 'application/json')
         if access_token is not None:
-            auth = '{0} OAUTH-TOKEN'.format(access_token)
+            auth = 'token {0}'.format(access_token)
             kw['headers'].setdefault('Authorization', auth)
 
         try:

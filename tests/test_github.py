@@ -150,7 +150,7 @@ def test_get_user(github, serving_app):
     @serving_app.route('/user')
     def user():
         authorization = flask.request.headers.get('authorization', '')
-        code = authorization.split(' OAUTH-TOKEN', 1)[0]
+        code = authorization.split(' ', 1)[1]
 
         if code == 'teapot':
             return flask.jsonify({}), 418
