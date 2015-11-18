@@ -25,11 +25,7 @@ views.after_request(save_session)
 def home():
     if 'user' not in g.session:
         return render_template('views/auth.html')
-    try:
-        repos = get_repos(g.session['user'])
-    except exceptions.NoSuchUserException:
-        # This shouldn't happen
-        raise InternalServerError()
+    repos = get_repos(g.session['user'])
     return render_template('views/home.html', repos=repos)
 
 
