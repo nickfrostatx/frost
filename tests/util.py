@@ -45,6 +45,13 @@ def db(request):
     })
     r.rpush('repos:nickfrostatx', 'frost', 'flask-hookserver', 'nass',
             'corral')
+    r.hmset('session:noauth', {
+        'csrf': 'somecsrf',
+    })
+    r.hmset('session:auth', {
+        'csrf': 'coolcsrf',
+        'user': 'nickfrostatx',
+    })
     return r
 
 

@@ -2,6 +2,11 @@
 """App-specific exceptions."""
 
 
+class NoSuchSessionException(Exception):
+
+    """There is no session with the given key."""
+
+
 class NoSuchUserException(Exception):
 
     """There is no user with the given username."""

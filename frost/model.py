@@ -36,6 +36,29 @@ def decode_repo(repo):
     return decoded
 
 
+def get_session_data(key, expire_time=None):
+    """Load all the values of a session dictionary, update expire."""
+    if not expire_time:
+        expire_time = 60 * 60 * 24 * 33
+    pipe = get_redis().pipeline()
+    pipe.hgetall('session:{0}'.format(key))
+    pipe.expire('session:{0}'.format(key), expire_time)
+    s = pipe.execute()[0]
+    if not s:
+        raise exceptions.NoSuchSessionException()
+    return decode_dict(s, b'csrf', b'user')
+
+
+def store_session_data(key, data, expire_time=None):
+    """Store the entire session, update expire time."""
+    if not expire_time:
+        expire_time = 60 * 60 * 24 * 33
+    pipe = get_redis().pipeline()
+    pipe.hmset('session:{0}'.format(key), data)
+    pipe.expire('session:{0}'.format(key), expire_time)
+    pipe.execute()
+
+
 def get_repos(user):
     """Return all the repos for a given user, sorted by last_update."""
     repos = get_redis().lrange('repos:{0}'.format(user), 0, -1)
