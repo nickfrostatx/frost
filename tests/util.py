@@ -52,6 +52,9 @@ def db(request):
         'csrf': 'coolcsrf',
         'user': 'nickfrostatx',
     })
+    r.hmset('user:nickfrostatx', {
+        'access_token': 'sometoken',
+    })
     return r
 
 

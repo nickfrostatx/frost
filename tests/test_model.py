@@ -38,6 +38,17 @@ def test_store_session(db):
     })
 
 
+def test_user_exists(db):
+    assert frost.model.user_exists('nickfrostatx') == True
+    assert frost.model.user_exists('fakeuser') == False
+
+
+def test_create_user(db):
+    frost.model.create_user('nickfrostatx', 't')
+    r = frost.model.get_redis()
+    assert r.hget('user:nickfrostatx', 'access_token') == b't'
+
+
 def test_get_repos(db):
     repos = frost.model.get_repos('nickfrostatx')
     assert type(repos) == list

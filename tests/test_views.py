@@ -4,6 +4,7 @@
 from frost.views import views
 from util import serving_app, db
 import frost.github
+import frost.model
 import contextlib
 import flask
 import pytest
@@ -95,6 +96,12 @@ def test_oauth(client, db, serving_app):
     rv = client.get('/oauth?state=somecsrf&code=mycode&next='
                     'http%3A%2F%2Flocalhost%2Fabc')
     assert rv.headers.get('Location') == 'http://localhost/'
+
+    assert frost.model.get_session_data('noauth') == {
+        'csrf': 'somecsrf',
+        'user': 'nickfrostatx',
+    }
+    assert frost.model.user_exists('nickfrostatx')
 
 
 def test_oauth_403(client, db):

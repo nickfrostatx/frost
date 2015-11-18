@@ -59,6 +59,18 @@ def store_session_data(key, data, expire_time=None):
     pipe.execute()
 
 
+def user_exists(user):
+    """Return whether the given user exists."""
+    return get_redis().exists('user:{0}'.format(user))
+
+
+def create_user(user, access_token):
+    """Create a user to the database."""
+    get_redis().hmset('user:{0}'.format(user), {
+        'access_token': access_token,
+    })
+
+
 def get_repos(user):
     """Return all the repos for a given user, sorted by last_update."""
     repos = get_redis().lrange('repos:{0}'.format(user), 0, -1)
