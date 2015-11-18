@@ -9,7 +9,6 @@ from .error import errorhandler
 from .model import get_repo_status
 
 
-
 badge = Blueprint('badge', __name__, static_folder='badges')
 
 
