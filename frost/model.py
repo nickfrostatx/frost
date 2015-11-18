@@ -18,13 +18,19 @@ def get_redis():
     return _redis
 
 
-def decode_repo(repo):
-    """Decode all keys and values to UTF-8."""
+def decode_dict(d, *keys):
+    """Decode all keys and values."""
     decoded = {}
-    for key in (b'name', b'status', b'build_status'):
-        if key in repo:
-            decoded[key.decode('utf-8')] = repo[key].decode('utf-8')
-    last_update = datetime.strptime(repo[b'last_update'].decode('utf-8'),
+    for key in keys:
+        if key in d:
+            decoded[key.decode()] = d[key].decode()
+    return decoded
+
+
+def decode_repo(repo):
+    """Decode repo, including last_update."""
+    decoded = decode_dict(repo, b'name', b'status', b'build_status')
+    last_update = datetime.strptime(repo[b'last_update'].decode(),
                                     '%Y-%m-%d %H:%M:%S')
     decoded['last_update'] = last_update
     return decoded
@@ -37,7 +43,7 @@ def get_repos(user):
         raise exceptions.NoSuchUserException()
     pipe = get_redis().pipeline()
     for repo in repos:
-        pipe.hgetall('repo:{0}:{1}'.format(user, repo.decode('utf-8')))
+        pipe.hgetall('repo:{0}:{1}'.format(user, repo.decode()))
     result = pipe.execute()
     decoded = []
     for i, r in enumerate(result):
@@ -59,4 +65,4 @@ def get_repo_status(user, repo):
     s = get_redis().hget('repo:{0}:{1}'.format(user, repo), 'build_status')
     if not s:
         raise exceptions.NoSuchRepoException()
-    return s.decode('utf-8')
+    return s.decode()
