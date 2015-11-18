@@ -27,7 +27,7 @@ def test_is_safe_url_absolute():
             if referrer:
                 headers = {'Referer': referrer}
             rv = client.get('/url', headers=headers)
-            return json.loads(rv.data.decode('utf-8'))['safe']
+            return json.loads(rv.data.decode())['safe']
 
         assert is_safe() == False
         assert is_safe('') == False
