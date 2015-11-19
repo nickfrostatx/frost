@@ -34,6 +34,13 @@ setup(
     packages=[
         'frost',
     ],
+    package_data={
+        'frost': [
+            'badges/*.svg',
+            'static/css/*.css',
+            'templates/*/*.html',
+        ],
+    },
     install_requires=requirements,
     extras_require={
         'testing': [
