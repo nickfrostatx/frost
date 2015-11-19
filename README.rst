@@ -15,6 +15,11 @@ frost-ci
 
 Totally not a Travis clone.
 
+This is a continuous integration server. Naturally, it also tests itself:
+
+.. image:: https://frost-ci.xyz/nickfrostatx/frost.svg
+    :target: https://frost-ci.xyz/nickfrostatx/frost
+
 Installation
 ------------
 
@@ -26,3 +31,4 @@ Usage
 -----
 
 TODO
+
