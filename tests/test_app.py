@@ -7,8 +7,12 @@ import os
 
 
 def test_create_app():
+    os.environ.clear()
     app = frost.app.create_app()
     assert isinstance(app, flask.Flask)
+    assert app.config['REDIS_URL'] == ''
+    assert app.config['GITHUB_CLIENT_ID'] == ''
+    assert app.config['GITHUB_CLIENT_SECRET'] == ''
 
 
 def test_app_config():
