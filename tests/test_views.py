@@ -16,7 +16,6 @@ def client():
     app.config['GITHUB_CLIENT_ID'] = 'deadbeefcafe'
     app.config['GITHUB_CLIENT_SECRET'] = 'sekrit'
     app.config['DEBUG'] = True
-    app.github = frost.github.GitHub(app)
     app.register_blueprint(frost.views.views)
     return app.test_client()
 
@@ -57,9 +56,9 @@ def test_oauth_403(client, db):
     assert rv.status_code == 403
 
 
-def test_oauth(client, db, serving_app):
-    client.application.github.base_url = serving_app.url
-    client.application.github.api_url = serving_app.url + '/api'
+def test_oauth(monkeypatch, client, db, serving_app):
+    monkeypatch.setattr('frost.github.BASE_URL', serving_app.url)
+    monkeypatch.setattr('frost.github.API_URL', serving_app.url + '/api')
 
     @serving_app.route('/login/oauth/access_token', methods=['POST'])
     def access_token():
@@ -99,9 +98,9 @@ def test_oauth(client, db, serving_app):
     assert frost.model.user_exists('someuser')
 
 
-def test_oauth_existing(client, db, serving_app):
-    client.application.github.base_url = serving_app.url
-    client.application.github.api_url = serving_app.url + '/api'
+def test_oauth_existing(monkeypatch, client, db, serving_app):
+    monkeypatch.setattr('frost.github.BASE_URL', serving_app.url)
+    monkeypatch.setattr('frost.github.API_URL', serving_app.url + '/api')
 
     @serving_app.route('/login/oauth/access_token', methods=['POST'])
     def access_token():
@@ -133,9 +132,9 @@ def test_oauth_403(client, db):
     assert rv.status_code == 403
 
 
-def test_oauth_503(client, db, serving_app):
-    client.application.github.base_url = 'http://0.0.0.0:1234'
-    client.application.github.api_url = 'http://0.0.0.0:1234'
+def test_oauth_503(monkeypatch, client, db, serving_app):
+    monkeypatch.setattr('frost.github.BASE_URL', 'http://0.0.0.0:1234')
+    monkeypatch.setattr('frost.github.API_URL', 'http://0.0.0.0:1234')
 
     @serving_app.route('/login/oauth/access_token', methods=['POST'])
     def access_token():
@@ -146,7 +145,7 @@ def test_oauth_503(client, db, serving_app):
     rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.status_code == 503
 
-    client.application.github.base_url = serving_app.url
+    monkeypatch.setattr('frost.github.BASE_URL', serving_app.url)
     rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.status_code == 503
 
