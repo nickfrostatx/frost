@@ -2,85 +2,68 @@
 """GitHub API."""
 
 import requests
-from . import exceptions
 
 
-class GitHub(object):
+BASE_URL = 'https://github.com'
+API_URL = 'https://api.github.com'
 
-    """GitHub API implementation."""
+session = requests.session()
 
-    def __init__(self, app, base_url='https://github.com',
-                 api_url='https://api.github.com'):
-        """Construct the API object."""
-        self.app = app
-        self.base_url = base_url
-        self.api_url = api_url
 
-    def get_access_token(self, code):
-        """Request an access token with the given code."""
-        url = '/login/oauth/access_token'
-        params = {
-            'code': code,
-            'client_id': self.client_id,
-            'client_secret': self.client_secret,
-        }
-        data = self.make_request('POST', url, base=self.base_url,
-                                 params=params)
+def _github_request(method, url, access_token=None, base=None, **kw):
+    """Make the actual request, and handle any errors."""
+    if base is None:
+        base = API_URL
 
+    kw.setdefault('headers', {})
+    kw['headers'].setdefault('Accept', 'application/json')
+
+    if access_token is not None:
+        kw['headers'].setdefault('Authorization', 'token ' + access_token)
+
+    try:
+        response = session.request(method, base + url, **kw)
+    except requests.exceptions.RequestException:
+        raise Exception('Failed to communicate with GitHub')
+
+    try:
+        data = response.json()
+    except ValueError:
+        raise Exception('GitHub returned bad JSON')
+
+    if not response.ok:
         try:
-            access_token = data['access_token']
-            assert hasattr(access_token, 'encode')  # Must be unicode
-        except (TypeError, KeyError, AssertionError):
-            raise exceptions.GitHubError()
+            msg = data['message']
+        except (TypeError, KeyError):
+            msg = '<no error message>'
+        raise Exception('{0}: {1}'.format(response.status_code, msg))
 
-        return access_token
+    return data
 
-    def get_user(self, access_token):
-        """Load a user."""
-        data = self.make_request('GET', '/user', access_token)
 
-        try:
-            name = data['login']
-            assert hasattr(name, 'encode')  # Must be unicode
-        except (TypeError, KeyError, AssertionError):
-            raise exceptions.GitHubError()
+def _get_string_from_json(data, key):
+    """Attempt to load a key from a JSON-decoded response object."""
+    try:
+        val = data[key]
+        assert hasattr(val, 'encode')  # Must be unicode
+    except (TypeError, KeyError, AssertionError):
+        raise Exception('GitHub response was missing "{0}"'.format(key))
+    return val
 
-        return name
 
-    def make_request(self, method, url, access_token=None, base=None, **kw):
-        """Make the actual request, and handle any errors."""
-        if not base:
-            base = self.api_url
-        url = base + url
+def get_access_token(code, client_id, client_secret):
+    """Request an access token with the given code."""
+    url = '/login/oauth/access_token'
+    params = {
+        'code': code,
+        'client_id': client_id,
+        'client_secret': client_secret,
+    }
+    data = _github_request('POST', url, base=BASE_URL, params=params)
+    return _get_string_from_json(data, 'access_token')
 
-        kw.setdefault('headers', {})
-        kw['headers'].setdefault('Accept', 'application/json')
-        if access_token is not None:
-            kw['headers'].setdefault('Authorization', 'token ' + access_token)
 
-        try:
-            response = self.session.request(method, url, **kw)
-        except requests.exceptions.RequestException as e:
-            raise exceptions.GitHubError()
-
-        if not response.ok:
-            raise exceptions.GitHubError(response)
-
-        try:
-            return response.json()
-        except ValueError:
-            raise exceptions.GitHubError()
-
-    @property
-    def client_id(self):
-        return self.app.config['GITHUB_CLIENT_ID']
-
-    @property
-    def client_secret(self):
-        return self.app.config['GITHUB_CLIENT_SECRET']
-
-    @property
-    def session(self):
-        if not hasattr(self, '_session'):
-            self._session = requests.session()
-        return self._session
+def get_user(access_token):
+    """Load a user."""
+    data = _github_request('GET', '/user', access_token)
+    return _get_string_from_json(data, 'login')

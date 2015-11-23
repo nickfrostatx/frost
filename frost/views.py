@@ -5,6 +5,7 @@ from flask import Blueprint, abort, current_app, g, request, render_template, \
                   redirect
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
+from .github import get_access_token, get_user
 from .model import user_exists, create_user, get_repos, get_repo
 from .session import init_session, save_session
 from .util import check_state, is_safe_url, random_string
@@ -53,9 +54,11 @@ def login():
 def oauth():
     code = request.args.get('code')
     try:
-        access_token = current_app.github.get_access_token(code)
-        user = current_app.github.get_user(access_token)
-    except exceptions.GitHubError as e:
+        client_id = current_app.config['CLIENT_ID']
+        client_secret = current_app.config['CLIENT_SECRET']
+        access_token = get_access_token(code, client_id, client_secret)
+        user = github.get_user(access_token)
+    except:
         abort(503)
 
     if not user_exists(user):

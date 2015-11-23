@@ -14,9 +14,6 @@ def create_app():
     for var in ('GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'REDIS_URL'):
         app.config.setdefault(var, os.environ.get(var, ''))
 
-    from .github import GitHub
-    app.github = GitHub(app)
-
     from .error import register_error_handler, html_handler
     register_error_handler(app, html_handler)
 
