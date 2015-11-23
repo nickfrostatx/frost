@@ -11,7 +11,8 @@ def create_app():
     """Return an instance of the main Flask application."""
     app = Flask(package_name)
 
-    for var in ('GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'REDIS_URL'):
+    for var in ('GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET', 'REDIS_URL',
+                'KEY'):
         app.config.setdefault(var, os.environ.get(var, ''))
 
     from .error import register_error_handler, html_handler
