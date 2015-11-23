@@ -54,10 +54,10 @@ def login():
 def oauth():
     code = request.args.get('code')
     try:
-        client_id = current_app.config['CLIENT_ID']
-        client_secret = current_app.config['CLIENT_SECRET']
+        client_id = current_app.config['GITHUB_CLIENT_ID']
+        client_secret = current_app.config['GITHUB_CLIENT_SECRET']
         access_token = get_access_token(code, client_id, client_secret)
-        user = github.get_user(access_token)
+        user = get_user(access_token)
     except:
         abort(503)
 
