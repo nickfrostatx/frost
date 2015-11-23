@@ -55,6 +55,11 @@ def store_session_data(key, data, expire_time=None):
     pipe.execute()
 
 
+def delete_session(key):
+    """Remove a session."""
+    get_redis().delete('session:{0}'.format(key))
+
+
 def user_exists(user):
     """Return whether the given user exists."""
     return get_redis().exists('user:{0}'.format(user))
