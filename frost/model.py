@@ -37,14 +37,9 @@ def decode_repo(repo):
     return decoded
 
 
-def get_session_data(key, expire_time=None):
-    """Load all the values of a session dictionary, update expire."""
-    if not expire_time:
-        expire_time = 60 * 60 * 24 * 33
-    pipe = get_redis().pipeline()
-    pipe.hgetall('session:{0}'.format(key))
-    pipe.expire('session:{0}'.format(key), expire_time)
-    s = pipe.execute()[0]
+def get_session_data(key):
+    """Load all the values of a session dictionary."""
+    s = get_redis().hgetall('session:{0}'.format(key))
     if not s:
         raise exceptions.NoSuchSessionException()
     return decode_dict(s, b'csrf', b'user')
