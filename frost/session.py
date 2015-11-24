@@ -60,8 +60,8 @@ class RedisSessionInterface(SessionInterface):
             new_sid = self.generate_sid()
         redis_exp = app.permanent_session_lifetime
         cookie_exp = self.get_expiration_time(app, session)
-        modified_data = {k: session.get(k) for k in session.modified_keys}
-        store_session_data(session.sid, modified_data, redis_exp,
+        changed_data = dict((k, session.get(k)) for k in session.modified_keys)
+        store_session_data(session.sid, changed_data, redis_exp,
                            rename_to=new_sid)
         response.set_cookie(app.session_cookie_name, new_sid or session.sid,
                             expires=cookie_exp, httponly=True, domain=domain,
