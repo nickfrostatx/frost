@@ -20,6 +20,7 @@ views = Blueprint('views', __name__, template_folder='templates')
 
 @views.route('/')
 def home():
+    if 'user' not in session:
         return render_template('views/auth.html')
     repos = get_repos(session['user'])
     return render_template('views/repos.html', user=session['user'],
