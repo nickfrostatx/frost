@@ -24,18 +24,37 @@ def test_get_authed_session(db):
 
 
 def test_invalid_session(db):
-    with pytest.raises(frost.exceptions.NoSuchSessionException):
+    with pytest.raises(LookupError):
         frost.model.get_session_data('fake')
 
 
 def test_store_session(db):
-    frost.model.store_session_data('somekey', {
-        'csrf': 'mycsrf',
-    })
+    expire = datetime.timedelta(0, 10)
 
-    frost.model.store_session_data('noauth', {
-        'csrf': 'mycsrf',
-    })
+    frost.model.store_session_data('somekey', {'csrf': 'mycsrf'}, expire)
+
+    frost.model.store_session_data('noauth', {'csrf': 'thecsrf'}, expire)
+
+    assert db.hget('session:somekey', 'csrf') == b'mycsrf'
+    assert db.hget('session:noauth', 'csrf') == b'thecsrf'
+
+
+def test_rename_session(db):
+    expire = datetime.timedelta(0, 10)
+
+    frost.model.store_session_data('noauth', {'csrf': 'mycsrf'}, expire,
+                                   rename_to='somekey')
+
+    frost.model.store_session_data('fake', {'csrf': 'thecsrf'}, expire,
+                                   rename_to='asdf')
+
+    assert db.hget('session:somekey', 'csrf') == b'mycsrf'
+    assert db.hget('session:asdf', 'csrf') == b'thecsrf'
+
+
+def test_delete_session(db):
+    frost.model.delete_session('noauth')
+    assert db.exists('session:noauth') == False
 
 
 def test_user_exists(db):

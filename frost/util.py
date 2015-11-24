@@ -2,7 +2,7 @@
 """Utility functions."""
 
 from base64 import urlsafe_b64encode
-from flask import request, g, abort
+from flask import request, session, abort
 from functools import wraps
 from math import ceil
 import os
@@ -17,7 +17,7 @@ def check_state(fn):
     @wraps(fn)
     def inner(*a, **kw):
         state = request.args.get('state')
-        if not state or state != g.session['csrf']:
+        if not state or state != session['csrf']:
             abort(403)
         return fn(*a, **kw)
     return inner

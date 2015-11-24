@@ -14,11 +14,15 @@ except ImportError:
 def test_check_state():
     app = flask.Flask(__name__)
 
-    @app.before_request
-    def fake_session():
-        flask.g.session = {
-            'csrf': 'somecsrf',
-        }
+    class FakeSessionInterface(flask.sessions.SessionInterface):
+
+        def open_session(self, app, request):
+            return {'csrf': 'somecsrf'}
+
+        def save_session(self, app, session, response):
+            pass
+
+    app.session_interface = FakeSessionInterface()
 
     @app.route('/')
     @frost.util.check_state

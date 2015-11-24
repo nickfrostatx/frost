@@ -41,17 +41,19 @@ def get_session_data(key):
     """Load all the values of a session dictionary."""
     s = get_redis().hgetall('session:{0}'.format(key))
     if not s:
-        raise exceptions.NoSuchSessionException()
+        raise LookupError()
     return decode_dict(s, b'csrf', b'user')
 
 
-def store_session_data(key, data, expire_time=None):
-    """Store the entire session, update expire time."""
-    if not expire_time:
-        expire_time = 60 * 60 * 24 * 33
+def store_session_data(key, data, expire, rename_to=None):
+    """Store the changes in the session, update expire time."""
+    expire_seconds = expire.days * 60 * 60 * 24 + expire.seconds
     pipe = get_redis().pipeline()
-    pipe.hmset('session:{0}'.format(key), data)
-    pipe.expire('session:{0}'.format(key), expire_time)
+    if data:
+        pipe.hmset('session:{0}'.format(key), data)
+    pipe.expire('session:{0}'.format(key), expire_seconds)
+    if rename_to is not None:
+        pipe.rename('session:{0}'.format(key), 'session:{0}'.format(rename_to))
     pipe.execute()
 
 

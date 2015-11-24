@@ -2,7 +2,7 @@
 
 {% block content %}
       <div class="middle">
-        <a class="auth-btn" href="/login?state={{ g.session.csrf }}">
+        <a class="auth-btn" href="/login?state={{ session.csrf }}">
           <span class="auth-big">Sign in</span><br />
           <span class="auth-small">With GitHub</span>
         </a>

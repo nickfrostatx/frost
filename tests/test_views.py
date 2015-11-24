@@ -4,6 +4,7 @@
 from util import serving_app, db
 import frost.github
 import frost.model
+import frost.session
 import frost.views
 import contextlib
 import flask
@@ -16,6 +17,7 @@ def client():
     app.config['GITHUB_CLIENT_ID'] = 'deadbeefcafe'
     app.config['GITHUB_CLIENT_SECRET'] = 'sekrit'
     app.config['DEBUG'] = True
+    app.session_interface = frost.session.RedisSessionInterface()
     app.register_blueprint(frost.views.views)
     return app.test_client()
 
@@ -91,10 +93,8 @@ def test_oauth(monkeypatch, client, db, serving_app):
                     'http%3A%2F%2Flocalhost%2Fabc')
     assert rv.headers.get('Location') == 'http://localhost/'
 
-    assert frost.model.get_session_data('noauth') == {
-        'csrf': 'somecsrf',
-        'user': 'someuser',
-    }
+    cid = rv.headers['Set-Cookie'][8:72]
+    assert db.hget('session:{0}'.format(cid), 'user') == b'someuser'
     assert frost.model.user_exists('someuser')
 
 
@@ -115,7 +115,8 @@ def test_oauth_existing(monkeypatch, client, db, serving_app):
     rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.headers.get('Location') == 'http://localhost/'
 
-    assert frost.model.get_session_data('noauth') == {
+    cid = rv.headers['Set-Cookie'][8:72]
+    assert frost.model.get_session_data(cid) == {
         'csrf': 'somecsrf',
         'user': 'nickfrostatx',
     }

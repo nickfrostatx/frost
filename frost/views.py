@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """Main HTML views."""
 
-from flask import Blueprint, abort, current_app, g, request, render_template, \
-                  redirect
+from flask import Blueprint, abort, current_app, request, render_template, \
+                  redirect, session
 from werkzeug.exceptions import InternalServerError
 from . import exceptions
 from .github import get_access_token, get_user
 from .model import user_exists, create_user, get_repos, get_repo
-from .session import init_session, save_session
 from .util import check_state, is_safe_url, random_string
 import requests
 try:
@@ -17,10 +16,6 @@ except ImportError:
 
 
 views = Blueprint('views', __name__, template_folder='templates')
-
-views.before_request(init_session)
-views.after_request(save_session)
-
 
 @views.route('/')
 def home():
@@ -64,7 +59,8 @@ def oauth():
     if not user_exists(user):
         create_user(user, access_token)
 
-    g.session['user'] = user
+    session['user'] = user
+    session.rotate = True
 
     next = request.args.get('next', '/')
     if not next or not is_safe_url(next, True):
