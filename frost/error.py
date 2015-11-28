@@ -6,15 +6,11 @@ from functools import wraps
 import werkzeug.exceptions
 
 
-ERROR_CODES = (400, 401, 403, 404, 405, 406, 408, 409, 410, 411, 412, 413, 414,
-               415, 416, 417, 418, 422, 423, 424, 426, 428, 429, 431, 501, 502,
-               503, 504, 505)
-
-
 def register_error_handler(app, fn):
     """Register a catch-all handler to an app or blueprint."""
-    for status in ERROR_CODES:
-        app.errorhandler(status)(fn)
+    for status in werkzeug.exceptions.default_exceptions:
+        if status != 500:
+            app.errorhandler(status)(fn)
 
     # If it's not a Blueprint
     if isinstance(app, Flask):
