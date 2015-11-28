@@ -4,7 +4,6 @@
 from flask import Blueprint, abort, current_app, request, render_template, \
                   redirect, session
 from werkzeug.exceptions import InternalServerError
-from . import exceptions
 from .github import get_access_token, get_user
 from .model import user_exists, create_user, get_repos, get_repo
 from .util import check_state, is_safe_url, random_string
@@ -73,7 +72,7 @@ def oauth():
 def user_page(user):
     try:
         repos = get_repos(user)
-    except exceptions.NoSuchUserException:
+    except LookupError:
         abort(404)
     return render_template('views/repos.html', user=user, repos=repos)
 
@@ -82,6 +81,6 @@ def user_page(user):
 def repo_page(user, repo):
     try:
         r = get_repo(user, repo)
-    except exceptions.NoSuchRepoException:
+    except LookupError:
         abort(404)
     return render_template('views/repo.html', user=user, name=repo, repo=r)

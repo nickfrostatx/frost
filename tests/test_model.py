@@ -3,7 +3,6 @@
 
 from util import db
 import datetime
-import frost.exceptions
 import frost.model
 import pytest
 
@@ -80,7 +79,7 @@ def test_get_repos(db):
 
 
 def test_invalid_user(db):
-    with pytest.raises(frost.exceptions.NoSuchUserException):
+    with pytest.raises(LookupError):
         frost.model.get_repos('fakeuser')
 
 
@@ -90,10 +89,10 @@ def test_get_repo(db):
 
 
 def test_invalid_repos(db):
-    with pytest.raises(frost.exceptions.NoSuchRepoException):
+    with pytest.raises(LookupError):
         frost.model.get_repo('fakeuser', 'fakerepo')
 
-    with pytest.raises(frost.exceptions.NoSuchRepoException):
+    with pytest.raises(LookupError):
         frost.model.get_repo('nickfrostatx', 'fakerepo')
 
 
@@ -103,8 +102,8 @@ def test_get_repo_status(db):
 
 
 def test_invalid_repo_status(db):
-    with pytest.raises(frost.exceptions.NoSuchRepoException):
+    with pytest.raises(LookupError):
         frost.model.get_repo_status('fakeuser', 'fakerepo')
 
-    with pytest.raises(frost.exceptions.NoSuchRepoException):
+    with pytest.raises(LookupError):
         frost.model.get_repo_status('nickfrostatx', 'fakerepo')

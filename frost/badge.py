@@ -4,7 +4,6 @@
 from flask import Blueprint, abort
 from flask.helpers import send_from_directory
 from werkzeug.exceptions import NotFound, InternalServerError
-from . import exceptions
 from .error import errorhandler
 from .model import get_repo_status
 
@@ -41,5 +40,5 @@ def view(user, repo):
     try:
         status = get_repo_status(user, repo)
         return render_badge(status)
-    except (exceptions.NoSuchUserException, exceptions.NoSuchRepoException):
+    except LookupError:
         abort(404)
