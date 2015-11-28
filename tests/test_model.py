@@ -64,8 +64,7 @@ def test_user_exists(db):
 
 def test_create_user(db):
     frost.model.create_user('nickfrostatx', 't')
-    r = frost.model.get_redis()
-    assert r.hget('user:nickfrostatx', 'access_token') == b't'
+    assert db.hget('user:nickfrostatx', 'access_token') == b't'
 
 
 def test_get_repos(db):
