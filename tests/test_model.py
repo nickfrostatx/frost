@@ -30,9 +30,9 @@ def test_invalid_session(db):
 def test_store_session(db):
     expire = datetime.timedelta(0, 10)
 
-    frost.model.store_session_data('somekey', {'csrf': 'mycsrf'}, expire)
+    frost.model.store_session_data('somekey', {'csrf': 'mycsrf'}, expire, None)
 
-    frost.model.store_session_data('noauth', {'csrf': 'thecsrf'}, expire)
+    frost.model.store_session_data('noauth', {'csrf': 'thecsrf'}, expire, None)
 
     assert db.hget('session:somekey', 'csrf') == b'mycsrf'
     assert db.hget('session:noauth', 'csrf') == b'thecsrf'
@@ -41,14 +41,10 @@ def test_store_session(db):
 def test_rename_session(db):
     expire = datetime.timedelta(0, 10)
 
-    frost.model.store_session_data('noauth', {'csrf': 'mycsrf'}, expire,
-                                   rename_to='somekey')
-
-    frost.model.store_session_data('fake', {'csrf': 'thecsrf'}, expire,
-                                   rename_to='asdf')
+    frost.model.store_session_data('somekey', {'csrf': 'mycsrf'}, expire,
+                                   'noauth')
 
     assert db.hget('session:somekey', 'csrf') == b'mycsrf'
-    assert db.hget('session:asdf', 'csrf') == b'thecsrf'
 
 
 def test_delete_session(db):

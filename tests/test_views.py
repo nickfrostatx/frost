@@ -70,31 +70,25 @@ def test_oauth(monkeypatch, client, db, serving_app):
     def user():
         return flask.jsonify({'login': 'someuser'})
 
+    sid = 'noauth'
     client.set_cookie('localhost', 'session', 'noauth')
-
-    rv = client.get('/oauth?state=somecsrf&code=mycode')
-    assert rv.headers.get('Location') == 'http://localhost/'
-
     rv = client.get('/oauth?state=somecsrf&code=mycode&next=/abc')
     assert rv.headers.get('Location') == 'http://localhost/abc'
+    sid = rv.headers['Set-Cookie'][8:72]
 
-    rv = client.get('/oauth?state=somecsrf&code=mycode&next=abc')
-    assert rv.headers.get('Location') == 'http://localhost/'
+    for u in ('', 'abc', 'http://abc', 'http:///abc', 'http://localhost/abc'):
+        csrf = db.hget('session:{0}'.format(sid), 'csrf').decode()
+        url = '/oauth?state={0}&code=mycode'.format(csrf)
+        if u:
+            url += '&next=' + u
+        client.set_cookie('localhost', 'session', sid)
+        rv = client.get(url)
+        sid = rv.headers['Set-Cookie'][8:72]
+        assert rv.headers.get('Location') == 'http://localhost/'
 
-    rv = client.get('/oauth?state=somecsrf&code=mycode&next='
-                    'http%3A%2F%2Fabc')
-    assert rv.headers.get('Location') == 'http://localhost/'
-
-    rv = client.get('/oauth?state=somecsrf&code=mycode&next='
-                    'http%3A%2F%2F%2Fabc')
-    assert rv.headers.get('Location') == 'http://localhost/'
-
-    rv = client.get('/oauth?state=somecsrf&code=mycode&next='
-                    'http%3A%2F%2Flocalhost%2Fabc')
-    assert rv.headers.get('Location') == 'http://localhost/'
-
-    cid = rv.headers['Set-Cookie'][8:72]
-    assert db.hget('session:{0}'.format(cid), 'user') == b'someuser'
+    assert 'session=noauth' not in rv.headers['Set-Cookie']
+    assert db.hget('session:{0}'.format(sid), 'user') == b'someuser'
+    assert db.hget('session:{0}'.format(sid), 'csrf') != b'somecsrf'
     assert frost.model.user_exists('someuser')
 
 
@@ -115,11 +109,9 @@ def test_oauth_existing(monkeypatch, client, db, serving_app):
     rv = client.get('/oauth?state=somecsrf&code=mycode')
     assert rv.headers.get('Location') == 'http://localhost/'
 
-    cid = rv.headers['Set-Cookie'][8:72]
-    assert frost.model.get_session_data(cid) == {
-        'csrf': 'somecsrf',
-        'user': 'nickfrostatx',
-    }
+    sid = rv.headers['Set-Cookie'][8:72]
+    assert db.hget('session:{0}'.format(sid), 'user') == b'nickfrostatx'
+    assert db.hget('session:{0}'.format(sid), 'csrf') != b'somecsrf'
 
 
 def test_oauth_403(client, db):

@@ -36,7 +36,7 @@ def client():
     def rotate():
         for k, v in flask.request.get_json().items():
             flask.session[k] = v
-        flask.session.rotate = True
+        flask.session.rotate()
         return home()
 
     return app.test_client()
@@ -127,19 +127,18 @@ def test_rotate_session(client, db):
     }
     rv = client.put('/rotate', headers=headers, data='{"csrf":"abc","a":"b"}')
     data = json.loads(rv.data.decode())
-    assert 'session=auth' not in rv.headers['Set-Cookie']
-    assert data['data'] == {
-        'csrf': 'abc',
-        'user': 'nickfrostatx',
-        'a': 'b',
-    }
+
+    assert len(data['sid']) == 64
+    assert 'session={0}'.format(data['sid']) in rv.headers['Set-Cookie']
+    assert data['data']['user'] == 'nickfrostatx'
+    assert data['data']['a'] == 'b'
+    assert len(data['data']['csrf']) == 64
     assert db.exists('session:auth') == False
-    sid = rv.headers['Set-Cookie'][8:72]
-    assert db.hgetall('session:{0}'.format(sid)) == {
-        b'csrf': b'abc',
-        b'user': b'nickfrostatx',
-        b'a': b'b',
-    }
+
+    db_data = db.hgetall('session:{0}'.format(data['sid']))
+    assert db_data[b'user'] == b'nickfrostatx'
+    assert db_data[b'a'] == b'b'
+    assert len(db_data[b'csrf']) == 64
 
 
 def test_rotate_new_session(client, db):
@@ -148,13 +147,12 @@ def test_rotate_new_session(client, db):
     }
     rv = client.put('/rotate', headers=headers, data='{"csrf":"abc","a":"b"}')
     data = json.loads(rv.data.decode())
+
     assert len(data['sid']) == 64
     assert 'session={0}'.format(data['sid']) in rv.headers['Set-Cookie']
-    assert data['data'] == {
-        'csrf': 'abc',
-        'a': 'b',
-    }
-    assert db.hgetall('session:{0}'.format(data['sid'])) == {
-        b'csrf': b'abc',
-        b'a': b'b',
-    }
+    assert data['data']['a'] == 'b'
+    assert len(data['data']['csrf']) == 64
+
+    db_data = db.hgetall('session:{0}'.format(data['sid']))
+    assert db_data[b'a'] == b'b'
+    assert len(db_data[b'csrf']) == 64

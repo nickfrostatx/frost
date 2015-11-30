@@ -19,7 +19,7 @@ views = Blueprint('views', __name__, template_folder='templates')
 
 @views.route('/')
 def home():
-    if 'user' not in session:
+    if not session.authed:
         return render_template('views/auth.html')
     repos = get_repos(session['user'])
     return render_template('views/repos.html', user=session['user'],
@@ -60,7 +60,7 @@ def oauth():
         create_user(user, access_token)
 
     session['user'] = user
-    session.rotate = True
+    session.rotate()
 
     next = request.args.get('next', '/')
     if not next or not is_safe_url(next, True):

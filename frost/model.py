@@ -44,15 +44,16 @@ def get_session_data(key):
     return decode_dict(s, b'csrf', b'user')
 
 
-def store_session_data(key, data, expire, rename_to=None):
+def store_session_data(sid, data, expire, old_sid):
     """Store the changes in the session, update expire time."""
     expire_seconds = expire.days * 60 * 60 * 24 + expire.seconds
     pipe = get_redis().pipeline()
+    if old_sid is not None:
+        pipe.rename('session:{0}'.format(old_sid), 'session:{0}'.format(sid))
     if data:
-        pipe.hmset('session:{0}'.format(key), data)
-    pipe.expire('session:{0}'.format(key), expire_seconds)
-    if rename_to is not None:
-        pipe.rename('session:{0}'.format(key), 'session:{0}'.format(rename_to))
+        pipe.hmset('session:{0}'.format(sid), data)
+    pipe.expire('session:{0}'.format(sid), expire_seconds)
+
     pipe.execute()
 
 
