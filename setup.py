@@ -16,7 +16,7 @@ with open('HISTORY.rst') as f:
 
 requirements = [
     'Flask',
-    'flask-hookserver',
+    'Flask-Hookserver',
     'redis',
     'requests',
 ]

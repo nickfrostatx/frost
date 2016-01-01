@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """GitHub web hooks."""
 
-from hookserver import HookRoutes
+from flask.ext.hookserver import Hooks
 from .error import errorhandler
 
 
-hooks = HookRoutes()
+hooks = Hooks()
 
 
 @errorhandler(hooks)

@@ -28,6 +28,6 @@ def create_app():
     app.register_blueprint(views)
 
     from .hooks import hooks
-    app.register_blueprint(hooks)
+    hooks.init_app(app)
 
     return app
