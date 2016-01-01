@@ -10,7 +10,7 @@ import pytest
 @pytest.fixture
 def client():
     app = flask.Flask(__name__)
-    hooks.init_app(app)
+    frost.hooks.hooks.init_app(app)
     app.config['DEBUG'] = True
     app.config['VALIDATE_IP'] = False
     app.config['VALIDATE_SIGNATURE'] = False
