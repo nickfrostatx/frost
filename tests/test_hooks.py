@@ -10,7 +10,7 @@ import pytest
 @pytest.fixture
 def client():
     app = flask.Flask(__name__)
-    app.register_blueprint(frost.hooks.hooks)
+    hooks.init_app(app)
     app.config['DEBUG'] = True
     app.config['VALIDATE_IP'] = False
     app.config['VALIDATE_SIGNATURE'] = False
@@ -36,9 +36,3 @@ def test_unused(client):
     rv = post(client, 'push', {})
     assert rv.data == b'Hook not used\n'
     assert rv.status_code == 200
-
-
-def test_bad_request(client):
-    rv = client.post('/hooks')
-    assert rv.data == b'hwhat\n'
-    assert rv.status_code == 400
