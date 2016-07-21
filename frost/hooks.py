@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """GitHub web hooks."""
 
-from flask.ext.hookserver import Hooks
+from flask_hookserver import Hooks
 
 
 hooks = Hooks()
