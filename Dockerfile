@@ -1,0 +1,16 @@
+FROM python:3.5
+
+WORKDIR /app
+
+RUN pip install uwsgi
+
+RUN useradd -r app
+
+ADD . /app
+RUN pip install /app
+
+USER app
+
+EXPOSE 8000
+
+CMD ["uwsgi", "--http", "0.0.0.0:8000", "-w", "frost.wsgi:application"]
