@@ -3,11 +3,9 @@
 
 from flask import Blueprint, abort, current_app, request, render_template, \
                   redirect, session
-from werkzeug.exceptions import InternalServerError
 from .github import get_access_token, get_user
 from .model import user_exists, create_user, get_repos, get_repo
-from .util import check_state, is_safe_url, random_string
-import requests
+from .util import check_state, is_safe_url
 try:
     from urllib.parse import quote, urlencode
 except ImportError:

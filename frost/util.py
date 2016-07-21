@@ -4,7 +4,6 @@
 from base64 import urlsafe_b64encode
 from flask import request, session, abort
 from functools import wraps
-from math import ceil
 import os
 try:
     from urllib.parse import urlparse

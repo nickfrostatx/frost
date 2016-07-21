@@ -1,5 +1,5 @@
 test:
-	py.test -vv --pep8 --cov=frost --cov-report=term-missing frost/ tests/
+	py.test -vv --pep8 --flakes --cov=frost --cov-report=term-missing frost/ tests/
 
 publish:
 	python setup.py register

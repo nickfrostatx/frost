@@ -6,7 +6,6 @@ import frost.github
 import frost.model
 import frost.session
 import frost.views
-import contextlib
 import flask
 import pytest
 

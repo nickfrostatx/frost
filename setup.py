@@ -48,6 +48,7 @@ setup(
             'fakeredis',
             'pytest',
             'pytest-cov',
+            'pytest-flakes',
             'pytest-pep8',
             'pytest-pep257',
         ],

@@ -178,5 +178,4 @@ def test_get_user(monkeypatch, serving_app):
         get_user('missing')
     assert 'GitHub response was missing "login"' in str(exc)
 
-    user = get_user('mycode')
-    assert user == 'mycodemycode'
+    assert get_user('mycode') == 'mycodemycode'

@@ -4,7 +4,6 @@
 from datetime import datetime, timedelta
 from flask import request
 from flask.sessions import SessionInterface, SessionMixin
-from werkzeug.datastructures import CallbackDict
 from .model import get_session_data, store_session_data, delete_session
 from .util import random_string
 

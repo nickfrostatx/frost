@@ -3,7 +3,6 @@
 
 from flask import Blueprint, abort
 from flask.helpers import send_from_directory
-from werkzeug.exceptions import NotFound, InternalServerError
 from .error import errorhandler
 from .model import get_repo_status
 
