@@ -1,16 +1,13 @@
 frost-ci
 ========
 
-.. image:: https://img.shields.io/travis/nickfrostatx/frost.svg
+.. image:: https://travis-ci.org/nickfrostatx/frost.svg?branch=master
     :target: https://travis-ci.org/nickfrostatx/frost
 
-.. image:: https://img.shields.io/coveralls/nickfrostatx/frost.svg
-    :target: https://coveralls.io/github/nickfrostatx/frost
+.. image:: https://coveralls.io/repos/github/nickfrostatx/frost/badge.svg?branch=master
+    :target: https://coveralls.io/github/nickfrostatx/frost?branch=master
 
-.. image:: https://img.shields.io/pypi/v/frost.svg
-    :target: https://pypi.python.org/pypi/frost
-
-.. image:: https://img.shields.io/pypi/l/frost.svg
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://raw.githubusercontent.com/nickfrostatx/frost/master/LICENSE
 
 Totally not a Travis clone.
