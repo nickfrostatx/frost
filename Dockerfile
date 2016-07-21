@@ -13,4 +13,4 @@ USER app
 
 EXPOSE 8000
 
-CMD ["uwsgi", "--http", "0.0.0.0:8000", "-w", "frost.wsgi:application"]
+CMD ["uwsgi", "-s", "0.0.0.0:8000", "-w", "frost.wsgi:application"]
