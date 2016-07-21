@@ -133,7 +133,7 @@ def test_rotate_session(client, db):
     assert data['data']['user'] == 'nickfrostatx'
     assert data['data']['a'] == 'b'
     assert len(data['data']['csrf']) == 64
-    assert db.exists('session:auth') == False
+    assert not db.exists('session:auth')
 
     db_data = db.hgetall('session:{0}'.format(data['sid']))
     assert db_data[b'user'] == b'nickfrostatx'

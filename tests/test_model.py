@@ -49,12 +49,12 @@ def test_rename_session(db):
 
 def test_delete_session(db):
     frost.model.delete_session('noauth')
-    assert db.exists('session:noauth') == False
+    assert not db.exists('session:noauth')
 
 
 def test_user_exists(db):
-    assert frost.model.user_exists('nickfrostatx') == True
-    assert frost.model.user_exists('fakeuser') == False
+    assert frost.model.user_exists('nickfrostatx')
+    assert not frost.model.user_exists('fakeuser')
 
 
 def test_create_user(db):

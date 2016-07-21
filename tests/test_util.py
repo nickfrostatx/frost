@@ -61,20 +61,20 @@ def test_is_safe_url_absolute():
             rv = client.get('/url', headers=headers)
             return json.loads(rv.data.decode())['safe']
 
-        assert is_safe() == False
-        assert is_safe('') == False
-        assert is_safe('/') == False
-        assert is_safe('abc') == False
-        assert is_safe('/abc') == False
-        assert is_safe('/url') == False
-        assert is_safe('http://example.com') == False
-        assert is_safe('http://example.com/abc') == False
-        assert is_safe('http://localhost:1234/abc') == False
-        assert is_safe('http://localhost/') == True
-        assert is_safe('http://localhost') == False
-        assert is_safe('ftp://localhost/abc') == False
-        assert is_safe('http://localhost/abc') == True
-        assert is_safe('http://localhost/url') == False
+        assert not is_safe()
+        assert not is_safe('')
+        assert not is_safe('/')
+        assert not is_safe('abc')
+        assert not is_safe('/abc')
+        assert not is_safe('/url')
+        assert not is_safe('http://example.com')
+        assert not is_safe('http://example.com/abc')
+        assert not is_safe('http://localhost:1234/abc')
+        assert not is_safe('http://localhost')
+        assert not is_safe('ftp://localhost/abc')
+        assert not is_safe('http://localhost/url')
+        assert is_safe('http://localhost/')
+        assert is_safe('http://localhost/abc')
 
 
 def test_is_safe_url_relative():
@@ -97,20 +97,20 @@ def test_is_safe_url_relative():
             rv = client.get(url)
             return json.loads(rv.data.decode('utf-8'))['safe']
 
-        assert is_safe() == False
-        assert is_safe('') == False
-        assert is_safe('/') == True
-        assert is_safe('abc') == False
-        assert is_safe('/abc') == True
-        assert is_safe('/url') == False
-        assert is_safe('http://abc') == False
-        assert is_safe('http://example.com') == False
-        assert is_safe('http://example.com/abc') == False
-        assert is_safe('http://localhost:1234/abc') == False
-        assert is_safe('http://localhost/') == False
-        assert is_safe('http://localhost') == False
-        assert is_safe('ftp://localhost/abc') == False
-        assert is_safe('http://localhost/abc') == False
+        assert not is_safe()
+        assert not is_safe('')
+        assert not is_safe('abc')
+        assert not is_safe('/url')
+        assert not is_safe('http://abc')
+        assert not is_safe('http://example.com')
+        assert not is_safe('http://example.com/abc')
+        assert not is_safe('http://localhost:1234/abc')
+        assert not is_safe('http://localhost/')
+        assert not is_safe('http://localhost')
+        assert not is_safe('ftp://localhost/abc')
+        assert not is_safe('http://localhost/abc')
+        assert is_safe('/')
+        assert is_safe('/abc')
 
 
 def test_random_string():
