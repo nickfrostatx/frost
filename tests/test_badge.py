@@ -48,6 +48,16 @@ def test_valid_badges(client, db):
     assert rv.status_code == 200
 
 
+def test_compressed_badge(client, db):
+    rv = client.get('/nickfrostatx/frost.svg', headers={
+        'Accept-Encoding': 'deflate, gzip',
+    })
+    validate_headers(rv)
+    assert rv.headers['Content-Encoding'] == 'gzip'
+    assert rv.data.startswith(b'\x1f\x8b')
+    assert rv.status_code == 200
+
+
 def test_custom_badge_error(client):
     def do418():
         flask.abort(418)
