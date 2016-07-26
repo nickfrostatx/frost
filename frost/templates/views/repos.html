@@ -4,6 +4,7 @@
       <div class="title">
         <a href="/{{ user }}">{{ user }}</a>
       </div>
+      {%- if repos %}
       {%- for repo in repos %}
       <div class="repo">
         <div class="name {{ repo.status }}">
@@ -11,4 +12,7 @@
         </div>
       </div>
       {%- endfor %}
+      {%- else %}
+      This user has no active repositories
+      {%- endif %}
 {%- endblock %}

@@ -61,6 +61,9 @@ def db(request):
     r.hmset('user:nickfrostatx', {
         'access_token': 'sometoken',
     })
+    r.hmset('user:emptyuser', {
+        'access_token': 'another_token',
+    })
     return r
 
 

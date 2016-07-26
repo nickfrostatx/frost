@@ -76,9 +76,11 @@ def create_user(user, access_token):
 
 def get_repos(user):
     """Return all the repos for a given user, sorted by last_update."""
+    if not get_redis().exists('user:{0}'.format(user)):
+        raise LookupError
     repos = get_redis().lrange('repos:{0}'.format(user), 0, -1)
     if not repos:
-        raise LookupError()
+        return []
     pipe = get_redis().pipeline()
     for repo in repos:
         pipe.hgetall('repo:{0}:{1}'.format(user, repo.decode()))

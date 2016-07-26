@@ -73,6 +73,8 @@ def test_get_repos(db):
         u'last_update': datetime.datetime(2015, 11, 14, 11, 30, 43),
     }
 
+    assert frost.model.get_repos('emptyuser') == []
+
 
 def test_invalid_user(db):
     with pytest.raises(LookupError):
