@@ -5,7 +5,7 @@ WORKDIR /app
 RUN pip install uwsgi
 
 RUN useradd -r app
-RUN CHMOD 644 /config/config.py
+RUN chmod 644 /config/config.py
 
 ADD . /app
 RUN pip install /app
